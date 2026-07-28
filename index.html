@@ -1,0 +1,1274 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ИИ: Код Команды — Учебная платформа</title>
+<meta name="description" content="Закрытая учебная платформа интенсива «ИИ: Код Команды» — видеоуроки, промпты и чек-листы.">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="apple-touch-icon" href="favicon.png">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --cream:#FAF7F4;--white:#fff;
+  --rose:#A85068;--rose-l:#C4788C;--rose-d:#7C3450;
+  --charcoal:#221830;--charcoal-l:#3A2C4E;
+  --text:#1A1420;--muted:rgba(26,20,32,.6);--border:rgba(168,80,104,.14);
+  --sidebar:272px;
+}
+html,body{height:100%;font-family:'Inter',system-ui,sans-serif;background:var(--cream);color:var(--text);overflow:hidden}
+#gate{position:fixed;inset:0;background:var(--charcoal);z-index:1000;display:flex;align-items:center;justify-content:center;flex-direction:column}
+.gate-logo{font-family:Georgia,'Times New Roman',serif;font-size:30px;font-weight:700;color:#fff;margin-bottom:6px;letter-spacing:.5px}
+.gate-logo em{color:var(--rose-l);font-style:italic}
+.gate-sub{font-size:13px;color:rgba(255,255,255,.4);margin-bottom:40px;font-weight:300}
+.gate-box{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);padding:36px 40px;width:340px;display:flex;flex-direction:column;gap:14px}
+.gate-label{font-size:11px;font-weight:500;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.5)}
+.gate-input{padding:12px 16px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);color:#fff;font-size:14px;outline:none;border-radius:2px;transition:border-color .2s;font-weight:300}
+.gate-input:focus{border-color:var(--rose-l)}
+.gate-input::placeholder{color:rgba(255,255,255,.25)}
+.gate-btn{padding:14px;background:var(--rose-d);color:#fff;border:none;font-size:14px;font-weight:500;cursor:pointer;border-radius:2px;transition:background .2s;letter-spacing:.3px}
+.gate-btn:hover{background:var(--rose)}
+.gate-hint{font-size:11px;color:rgba(255,255,255,.25);text-align:center;font-weight:300}
+.gate-demo{font-size:11px;color:rgba(168,80,104,.5);text-align:center}
+#app{display:none;height:100vh;flex-direction:column}
+#app.show{display:flex}
+.topbar{height:56px;background:var(--charcoal);display:flex;align-items:center;justify-content:space-between;padding:0 24px;flex-shrink:0;border-bottom:1px solid rgba(255,255,255,.08)}
+.topbar-logo{font-family:Georgia,'Times New Roman',serif;font-size:18px;font-weight:700;color:#fff;letter-spacing:.3px}
+.topbar-logo em{color:var(--rose-l);font-style:italic}
+.topbar-right{display:flex;align-items:center;gap:20px}
+.topbar-progress{display:flex;align-items:center;gap:10px}
+.topbar-progress-label{font-size:12px;color:rgba(255,255,255,.45);font-weight:300}
+.progress-bar{width:120px;height:4px;background:rgba(255,255,255,.12);border-radius:2px;overflow:hidden}
+.progress-fill{height:100%;background:var(--rose);border-radius:2px;transition:width .4s ease}
+.topbar-user{width:34px;height:34px;border-radius:50%;background:var(--charcoal-l);border:1px solid rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;color:#fff;cursor:pointer}
+.body{display:flex;flex:1;overflow:hidden}
+.sidebar{width:var(--sidebar);background:#fff;border-right:1px solid var(--border);overflow-y:auto;flex-shrink:0;display:flex;flex-direction:column}
+.sidebar-head{padding:20px 20px 12px;border-bottom:1px solid var(--border);flex-shrink:0}
+.sidebar-course{font-size:11px;font-weight:500;letter-spacing:1.5px;text-transform:uppercase;color:var(--rose);margin-bottom:4px}
+.sidebar-title{font-family:Georgia,'Times New Roman',serif;font-size:17px;font-weight:700;color:var(--charcoal);line-height:1.3}
+.sidebar-stats{display:flex;gap:12px;margin-top:10px}
+.sidebar-stat{font-size:11px;color:var(--muted);font-weight:300}
+.sidebar-stat span{color:var(--charcoal);font-weight:500}
+.module{border-bottom:1px solid var(--border)}
+.module-head{padding:13px 20px;display:flex;align-items:center;gap:10px;cursor:pointer;background:var(--cream);transition:background .15s}
+.module-head:hover{background:rgba(168,80,104,.05)}
+.module-n{width:22px;height:22px;border-radius:50%;background:var(--charcoal);color:#fff;font-size:10px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.module-n.done{background:var(--rose)}
+.module-title{font-size:12px;font-weight:500;color:var(--charcoal);flex:1;line-height:1.3}
+.module-count{font-size:11px;color:var(--muted);font-weight:300;white-space:nowrap}
+.lessons{display:flex;flex-direction:column}
+.lesson-item{padding:9px 20px 9px 36px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:background .15s;border-left:2px solid transparent}
+.lesson-item:hover{background:rgba(168,80,104,.05)}
+.lesson-item.active{background:rgba(168,80,104,.08);border-left-color:var(--rose)}
+.lesson-item.done .lesson-check{background:var(--rose);border-color:var(--rose)}
+.lesson-item.done .lesson-check::after{content:'✓';color:#fff;font-size:9px;font-weight:700}
+.lesson-check{width:16px;height:16px;border-radius:50%;border:1.5px solid rgba(168,80,104,.3);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.lesson-name{font-size:12px;color:var(--muted);flex:1;line-height:1.4;font-weight:300}
+.lesson-item.active .lesson-name{color:var(--charcoal);font-weight:400}
+.lesson-dur{font-size:10px;color:var(--muted);white-space:nowrap;font-weight:300}
+.main{flex:1;overflow-y:auto;background:var(--cream)}
+.main-inner{max-width:820px;margin:0 auto;padding:40px 40px 80px}
+.lesson-breadcrumb{font-size:12px;color:var(--muted);margin-bottom:20px;font-weight:300}
+.lesson-breadcrumb span{color:var(--charcoal);font-weight:400}
+.lesson-header{margin-bottom:28px}
+.lesson-module-tag{font-size:11px;font-weight:500;letter-spacing:1.5px;text-transform:uppercase;color:var(--rose);margin-bottom:8px}
+.lesson-title{font-family:Georgia,'Times New Roman',serif;font-size:36px;font-weight:700;color:var(--charcoal);line-height:1.2;margin-bottom:12px}
+.lesson-meta{display:flex;gap:16px;align-items:center}
+.lesson-meta-item{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:5px;font-weight:300}
+.video-wrap{background:var(--charcoal);border-radius:4px;aspect-ratio:16/9;position:relative;margin-bottom:28px;overflow:hidden}
+.video-wrap iframe{position:absolute;inset:0;width:100%;height:100%;border:none}
+.video-placeholder{position:absolute;inset:0;background:linear-gradient(135deg,#221830,#3A2C4E);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:14px}
+.video-play{width:64px;height:64px;background:rgba(255,255,255,.15);border:2px solid rgba(255,255,255,.4);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s}
+.video-play:hover{background:var(--rose);border-color:var(--rose);transform:scale(1.08)}
+.video-play svg{width:24px;height:24px;fill:#fff;margin-left:3px}
+.video-label{position:absolute;bottom:16px;left:16px;background:rgba(0,0,0,.6);color:rgba(255,255,255,.8);font-size:11px;padding:4px 10px;border-radius:2px;font-weight:300}
+.video-overlay-text{font-family:Georgia,'Times New Roman',serif;font-size:18px;color:rgba(255,255,255,.6);text-align:center;padding:0 24px;line-height:1.4}
+.lesson-content{font-size:15px;color:var(--text);line-height:1.85;font-weight:300;margin-bottom:32px}
+.lesson-content h3{font-family:Georgia,'Times New Roman',serif;font-size:22px;font-weight:600;color:var(--charcoal);margin:28px 0 12px}
+.lesson-content p{margin-bottom:16px}
+.lesson-content ul{padding-left:20px;margin-bottom:16px}
+.lesson-content li{margin-bottom:8px}
+.lesson-content strong{color:var(--charcoal);font-weight:500}
+.materials{margin-bottom:36px}
+.materials-title{font-size:12px;font-weight:500;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
+.material-list{display:flex;flex-direction:column;gap:8px}
+.material-item{display:flex;align-items:center;gap:12px;padding:12px 16px;background:#fff;border:1px solid var(--border);border-radius:2px;cursor:pointer;transition:border-color .2s}
+.material-item:hover{border-color:var(--rose-l)}
+.material-icon{width:36px;height:36px;border-radius:2px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.material-name{font-size:13px;color:var(--charcoal);font-weight:400;flex:1}
+.material-size{font-size:11px;color:var(--muted);font-weight:300}
+.material-dl{font-size:11px;color:var(--rose);font-weight:500}
+.homework{background:#fff;border:1px solid var(--border);padding:28px 32px;margin-bottom:36px;border-radius:2px}
+.homework-tag{font-size:11px;font-weight:500;letter-spacing:1.5px;text-transform:uppercase;color:var(--rose);margin-bottom:10px}
+.homework-title{font-family:Georgia,'Times New Roman',serif;font-size:20px;font-weight:600;color:var(--charcoal);margin-bottom:10px}
+.homework-text{font-size:14px;color:var(--muted);line-height:1.7;font-weight:300;margin-bottom:16px}
+.homework-input{width:100%;padding:12px 16px;border:1px solid var(--border);font-size:14px;color:var(--text);resize:vertical;min-height:100px;outline:none;border-radius:2px;transition:border-color .2s;font-weight:300}
+.homework-input:focus{border-color:var(--rose)}
+.homework-btn{margin-top:12px;padding:12px 24px;background:var(--charcoal);color:#fff;border:none;font-size:13px;font-weight:500;cursor:pointer;border-radius:2px;transition:background .2s;letter-spacing:.3px}
+.homework-btn:hover{background:var(--rose-d)}
+.lesson-nav{display:flex;justify-content:space-between;align-items:center;padding-top:24px;border-top:1px solid var(--border)}
+.btn-nav-lesson{display:inline-flex;align-items:center;gap:8px;padding:12px 22px;border-radius:2px;font-size:13px;font-weight:500;cursor:pointer;transition:all .2s;border:none;letter-spacing:.3px}
+.btn-prev{background:#fff;color:var(--charcoal);border:1px solid var(--border)}
+.btn-prev:hover{border-color:var(--charcoal)}
+.btn-next{background:var(--charcoal);color:#fff}
+.btn-next:hover{background:var(--rose-d)}
+.btn-done{background:var(--rose-d);color:#fff}
+.btn-done:hover{background:var(--rose)}
+.welcome{text-align:center;padding:60px 40px}
+.welcome-emoji{font-size:48px;margin-bottom:20px}
+.welcome-title{font-family:Georgia,'Times New Roman',serif;font-size:40px;font-weight:700;color:var(--charcoal);margin-bottom:12px}
+.welcome-sub{font-size:16px;color:var(--muted);line-height:1.7;max-width:520px;margin:0 auto 32px;font-weight:300}
+.welcome-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:36px;text-align:left}
+.welcome-card{background:#fff;border:1px solid var(--border);padding:24px 20px;border-radius:2px}
+.welcome-card-n{font-family:Georgia,'Times New Roman',serif;font-size:40px;font-weight:300;color:rgba(168,80,104,.3);margin-bottom:6px;line-height:1}
+.welcome-card-t{font-size:14px;font-weight:500;color:var(--charcoal);margin-bottom:4px}
+.welcome-card-s{font-size:12px;color:var(--muted);font-weight:300;line-height:1.5}
+.btn-start{display:inline-flex;align-items:center;gap:10px;padding:16px 32px;background:var(--charcoal);color:#fff;border:none;font-size:15px;font-weight:500;cursor:pointer;border-radius:2px;transition:background .2s;letter-spacing:.3px}
+.btn-start:hover{background:var(--rose-d)}
+
+/* CHAT PEEK */
+.chat-peek{margin-top:56px;text-align:left}
+.chat-peek-tag{font-size:11px;font-weight:500;letter-spacing:1.5px;text-transform:uppercase;color:var(--rose);margin-bottom:8px;text-align:center}
+.chat-peek-title{font-family:Georgia,'Times New Roman',serif;font-size:26px;font-weight:700;color:var(--charcoal);text-align:center;margin-bottom:6px}
+.chat-peek-sub{font-size:13px;color:var(--muted);text-align:center;margin-bottom:28px;font-weight:300}
+.chat-frame{background:#fff;border:1px solid var(--border);border-radius:6px;padding:6px}
+.chat-head{display:flex;align-items:center;gap:12px;padding:16px 18px;border-bottom:1px solid var(--border)}
+.chat-dot{width:9px;height:9px;border-radius:50%;background:#22c55e;flex-shrink:0;box-shadow:0 0 0 3px rgba(34,197,94,.18)}
+.chat-head-title{font-size:13px;font-weight:600;color:var(--charcoal)}
+.chat-head-sub{font-size:11px;color:var(--muted);font-weight:300}
+.chat-body{display:flex;flex-direction:column;gap:16px;padding:24px 18px 18px}
+.msg{display:flex;gap:12px;max-width:640px}
+.msg-av{width:38px;height:38px;border-radius:50%;flex-shrink:0;background:linear-gradient(135deg,var(--charcoal),var(--rose-d));color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600}
+.msg-col{display:flex;flex-direction:column;gap:5px;min-width:0}
+.msg-name{font-size:12px;font-weight:600;color:var(--charcoal)}
+.msg-bubble{background:rgba(168,80,104,.06);border:1px solid var(--border);border-radius:4px 14px 14px 14px;padding:13px 16px;font-size:13px;line-height:1.6;color:var(--text);font-weight:300}
+.msg-bubble p{margin-bottom:8px}
+.msg-bubble p:last-child{margin-bottom:0}
+.msg-more{display:inline-flex;margin-top:8px;font-size:11.5px;font-weight:600;color:var(--rose-d);cursor:pointer;background:none;border:none;padding:0;font-family:inherit}
+.msg-bubble.clamped{max-height:110px;overflow:hidden;position:relative}
+.msg-bubble.clamped::after{content:'';position:absolute;left:0;right:0;bottom:0;height:40px;background:linear-gradient(to bottom,rgba(255,255,255,0),rgba(255,255,255,.96))}
+</style>
+</head>
+<body>
+<div id="gate">
+  <img src="logo-square.png" alt="ИИ: Код Команды" style="width:96px;height:96px;border-radius:16px;margin-bottom:16px">
+  <div class="gate-logo">ИИ: <em>Код Команды</em></div>
+  <div class="gate-sub">Авторский интенсив Анны Ники Гулевой</div>
+  <div class="gate-box">
+    <div class="gate-label">Введите код доступа</div>
+    <input class="gate-input" type="password" id="gateInput" placeholder="Ваш код из письма" autocomplete="off">
+    <button class="gate-btn" onclick="tryEnter()">Войти в платформу</button>
+    <div class="gate-hint">Код отправлен на вашу почту после оплаты</div>
+    <div class="gate-demo">Демо: нажмите «Войти» без пароля</div>
+  </div>
+</div>
+<div id="app">
+  <div class="topbar">
+    <div class="topbar-logo" style="display:flex;align-items:center;gap:8px"><img src="logo-square.png" alt="" style="width:24px;height:24px;border-radius:5px">ИИ: <em>Код Команды</em></div>
+    <div class="topbar-right">
+      <div class="topbar-progress">
+        <div class="topbar-progress-label">Прогресс: <span id="progressPct">0%</span></div>
+        <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+      </div>
+      <div class="topbar-user" title="Ваш профиль">А</div>
+    </div>
+  </div>
+  <div class="body">
+    <div class="sidebar">
+      <div class="sidebar-head">
+        <div class="sidebar-course">Интенсив · ИИ: Код Команды</div>
+        <div class="sidebar-title">13 модулей + книга</div>
+        <div class="sidebar-stats">
+          <div class="sidebar-stat"><span id="doneCount">0</span> / <span id="totalCount">0</span> уроков</div>
+        </div>
+      </div>
+      <div id="curriculum"></div>
+    </div>
+    <div class="main" id="main">
+      <div class="main-inner" id="welcomeScreen">
+        <div class="welcome">
+          <div class="welcome-emoji">👋</div>
+          <div class="welcome-title">Добро пожаловать!</div>
+          <div class="welcome-sub">Авторский интенсив «ИИ: Код Команды» — создайте свою личную команду ИИ-ассистентов и работайте умнее уже через 2 недели.</div>
+          <div class="welcome-cards">
+            <div class="welcome-card"><div class="welcome-card-n">13</div><div class="welcome-card-t">Модулей</div><div class="welcome-card-s">Практические уроки с домашними заданиями</div></div>
+            <div class="welcome-card"><div class="welcome-card-n">10+</div><div class="welcome-card-t">ИИ-ассистентов</div><div class="welcome-card-s">Коуч, психолог, астролог, маркетолог и другие</div></div>
+            <div class="welcome-card"><div class="welcome-card-n">100+</div><div class="welcome-card-t">Точных промтов</div><div class="welcome-card-s">Готовые промты для вашей работы с ИИ</div></div>
+          </div>
+          <button class="btn-start" onclick="openLesson(0,0)">Начать обучение →</button>
+
+          <div class="chat-peek">
+            <div class="chat-peek-tag">Что происходит в чате интенсива</div>
+            <div class="chat-peek-title">Загляните одним глазком</div>
+            <div class="chat-peek-sub">Реальная переписка участниц — без купюр и без актёров</div>
+            <div class="chat-frame">
+              <div class="chat-head">
+                <div class="chat-dot"></div>
+                <div>
+                  <div class="chat-head-title">Чат интенсива «ИИ: Код Команды»</div>
+                  <div class="chat-head-sub">закрытая группа участниц</div>
+                </div>
+              </div>
+              <div class="chat-body">
+
+                <div class="msg">
+                  <div class="msg-av">НШ</div>
+                  <div class="msg-col">
+                    <div class="msg-name">Наталья Швецова</div>
+                    <div class="msg-bubble">
+                      <p>Посмотрела зум, взяла для себя ещё идеи создания новых помощников и чатов. И ещё немного понимания, как общаться, как задавать вопросы ИИ, благодарю Анна 👑</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="msg">
+                  <div class="msg-av">ОК</div>
+                  <div class="msg-col">
+                    <div class="msg-name">Ольга Корчагина</div>
+                    <div class="msg-bubble">
+                      <p>Создала ИИ-помощника по здоровому образу жизни и помощника-садовода 😍</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="msg">
+                  <div class="msg-av">ТР</div>
+                  <div class="msg-col">
+                    <div class="msg-name">Татьяна Рогожина</div>
+                    <div class="msg-bubble clamped">
+                      <p>Интенсив «ИИ: код команды», созданный медиапродюсером Анной Никой Гулёвой, получился очень удачным и, честно говоря, превзошёл мои ожидания. Формат оказался очень удобным: короткие видео, текстовые инструкции и двухнедельная длительность, но без дедлайнов и избыточной информации.</p>
+                      <p>Выбранная для создания ИИ-ассистентов нейросеть DeepSeek тоже была правильным и продуманным решением. Когда стало получаться, а с Анной Никой по-другому, похоже, не бывает, пришёл интерес, а потом и азарт, что стало главной движущей силой для меня.</p>
+                      <p>Приятным шоком стало общение с ИИ-психологом одним тяжёлым вечером, когда казалось, что нет больше ни сил, ни энергии. Открыла приложение на смартфоне и стала наговаривать, общение длилось более часа. Когда моя ИИ-психолог Наталья написала: «Таня, я тебя понимаю, как человек», я вообще оттаяла, стала более откровенной, получила массу осознаний.</p>
+                      <p>Сердечно благодарю Анну Нику Гулеву за расширение моих горизонтов, за новое видение и новые перспективы! Анна Ника = ЗНАК КАЧЕСТВА!</p>
+                    </div>
+                    <button class="msg-more" onclick="toggleMsg(this)">Читать полностью ↓</button>
+                  </div>
+                </div>
+
+                <div class="msg">
+                  <div class="msg-av">ОК</div>
+                  <div class="msg-col">
+                    <div class="msg-name">Ольга Корчагина</div>
+                    <div class="msg-bubble">
+                      <p>Интенсив выстроен пошагово. Для меня, как новичка в работе с ИИ, подача материала была доступной и понятной. Бери и делай! Идёшь чётко по шагам, и всё получается 100%.</p>
+                      <p>Полюбила ассистента-коуча — как он мне помог выстроить свой путь в новом проекте, взаимодействую с ним каждый день! А ещё дополнительный ассистент по проведению мероприятий помог мне провести мероприятие со 107 детьми. У меня восторг от полученных знаний и от результата! Благодарю!</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="msg">
+                  <div class="msg-av">ОК</div>
+                  <div class="msg-col">
+                    <div class="msg-name">Ольга Корчагина</div>
+                    <div class="msg-bubble">
+                      <p>Для меня взаимодействие с ИИ впервые. Ух, дух захватывает! От скорости, точности и чёткости! Благодаря Дипсику расширила видение. Подсветил моменты, на которые я бы даже не обратила внимания.</p>
+                      <p>Я довольна! Вот это помощник!!! Двигаемся дальше!</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="msg">
+                  <div class="msg-av">РМ</div>
+                  <div class="msg-col">
+                    <div class="msg-name">Римма Муратшина</div>
+                    <div class="msg-bubble">
+                      <p>Пообщалась, выдал конкретные данные, куда и к кому обратиться, на основании моих данных. Интересно</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="msg">
+                  <div class="msg-av">АЗ</div>
+                  <div class="msg-col">
+                    <div class="msg-name">Анна Звездина</div>
+                    <div class="msg-bubble">
+                      <p>Я пообщалась с ассистентом, получила подробный план постов для моей группы. Очень полезно 👍</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="msg">
+                  <div class="msg-av">ГВ</div>
+                  <div class="msg-col">
+                    <div class="msg-name">Гульфия Власенко</div>
+                    <div class="msg-bubble">
+                      <p>Ух вот это да, второй день беседуем, и это лучше всех коучей 😅 Поймала себя на мысли, как тяжело мыслить масштабно — будем теперь и это прорабатывать! 💥</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="msg">
+                  <div class="msg-av">ОК</div>
+                  <div class="msg-col">
+                    <div class="msg-name">Ольга Корчагина</div>
+                    <div class="msg-bubble">
+                      <p>Создала ИИ-помощника коуча. Его зовут Кирилл. Мне понравился его ответ: «Я не даю тебе врать самой себе». Вытаскивает из меня мои «страшилки», которые сама себе придумала)</p>
+                      <p>Помогает в конкретной ситуации, как выстроить здоровую успешную команду и быть наставником для своих партнёров. Комфортное взаимодействие с ним!</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="msg">
+                  <div class="msg-av">ТР</div>
+                  <div class="msg-col">
+                    <div class="msg-name">Татьяна Рогожина</div>
+                    <div class="msg-bubble">
+                      <p>ИИ-астролога создала — это молодая умная девушка Инга. Я вообще никогда не интересовалась ни астрологией, ни нумерологией, ни натальными картами, поэтому была просто поражена, как всё точно было сформулировано по моим данным и по данным мужа.</p>
+                      <p>Один важный день для меня рассчитала, и прогноз на 2026 год пообещала, что будет открытием для меня. Благодарю, Анна, что предложила такого ассистента создать, я в приятном шоке!</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="msg">
+                  <div class="msg-av">ТР</div>
+                  <div class="msg-col">
+                    <div class="msg-name">Татьяна Рогожина</div>
+                    <div class="msg-bubble">
+                      <p>Создала маркетолога-копирайтера по имени Игорь. Сразу завалил меня идеями и вопросами. Договорились, что пойдём без спешки, не забегая вперёд и по моему плану.</p>
+                      <p>Всех основных ассистентов сделала, планирую ещё консультанта по здоровью и нутрициологии, а также секретаря-помощника. Теперь только и думаю о своих новых «дружочках»... Вовремя сказала себе стоп! Кто тут босс? Я тут босс! 😁</p>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="main-inner" id="lessonScreen" style="display:none"></div>
+    </div>
+  </div>
+</div>
+<script>
+const PASS='kod2024';
+function mkVideo(l){
+  if(l.rutube){
+    return '<div class="video-wrap"><iframe src="'+l.rutube+'" allow="clipboard-write; autoplay" webkitAllowFullScreen mozallowfullscreen allowfullscreen></iframe></div>';
+  }
+  if(l.youtube){
+    var asp=l.shorts?'aspect-ratio:9/16;max-width:320px;margin:0 auto 28px;':'';
+    return '<div class="video-wrap" style="'+asp+'"><iframe src="https://www.youtube.com/embed/'+l.youtube+'?rel=0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>';
+  }
+  return '<div class="video-wrap"><div class="video-placeholder"><div class="video-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z" fill="white"/></svg></div><div class="video-overlay-text">'+l.title+'</div></div><div class="video-label">Видео · '+l.dur+'</div></div>';
+}
+function mkMats(mats){
+  if(!mats||!mats.length)return'';
+  return'<div class="materials"><div class="materials-title">Материалы к уроку</div><div class="material-list">'+mats.map(function(m){
+    var action = m.fileKey
+      ? '<div class="material-dl" onclick="downloadMaterial(\''+m.fileKey+'\')" style="cursor:pointer">Скачать</div>'
+      : '<div class="material-dl" style="opacity:.4;cursor:default">Скоро</div>';
+    return '<div class="material-item"><div class="material-icon">'+m.icon+'</div><div class="material-name">'+m.name+'</div><div class="material-size">'+m.size+'</div>'+action+'</div>';
+  }).join('')+'</div></div>';
+}
+function downloadMaterial(key){
+  var f = MATERIALS_CONTENT[key];
+  if(!f) return;
+  if(window.claude && window.claude.downloads){
+    window.claude.downloads.save({filename:f.filename, data:f.content}).catch(function(err){
+      if(err && err.code==='declined') return;
+      alert('Не удалось сохранить файл.');
+    });
+  } else {
+    var blob = new Blob([f.content], {type:'text/plain;charset=utf-8'});
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url; a.download = f.filename;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function(){ URL.revokeObjectURL(url); }, 4000);
+  }
+}
+var MATERIALS_CONTENT = {
+  offerContract: { filename: 'Дoговор-оферта.md', content: `# ДОГОВОР-ОФЕРТА
+## на оказание информационно-консультационных услуг по программе интенсивного сопровождения «ИИ: КОД КОМАНДЫ»
+
+г. Сочи
+Настоящий документ является публичной офертой
+
+---
+
+## 1. Термины и определения
+
+1.1. Оферта — настоящий документ «Договор-оферта на оказание информационно-консультационных услуг», размещённый в открытом доступе на информационных ресурсах Исполнителя.
+
+1.2. Исполнитель — Индивидуальный предприниматель Колоднова Анна Александровна, действующая от имени медиаагентства «КОД МЕДИА», оказывающая услуги по настоящему Договору.
+
+1.3. Заказчик — дееспособное физическое лицо, осуществившее акцепт настоящей Оферты и оплатившее услуги Исполнителя.
+
+1.4. Акцепт — полное и безоговорочное принятие условий настоящей Оферты путём совершения совокупности действий: ознакомления с условиями, заполнения регистрационной формы и оплаты услуг.
+
+1.5. Онлайн-программа интенсивного сопровождения «ИИ: КОД КОМАНДЫ» (далее — Программа, Интенсив) — совокупность обучающих материалов, вебинаров, практических заданий и консультаций, объединённых единой тематикой по созданию персональных ИИ-ассистентов.
+
+1.6. Чат поддержки — закрытый канал связи в мессенджере Telegram, VK или иной платформе, используемый для коммуникации между Исполнителем и Заказчиками в рамках Программы.
+
+1.7. Материалы Программы — видеозаписи, текстовые инструкции, промпты, чек-листы, домашние задания и иные материалы, предоставляемые Заказчику в рамках Программы.
+
+1.8. Платформа — программное обеспечение (включая, но не ограничиваясь: VK, Telegram, Zoom, Яндекс.Телемост, DeepSeek), используемое Исполнителем для проведения занятий и размещения материалов.
+
+1.9. Стороны — Исполнитель и Заказчик совместно.
+
+## 2. Общие положения
+
+2.1. Настоящий документ является официальным предложением (публичной офертой) Исполнителя, адресованным неопределённому кругу дееспособных физических лиц, заключить договор оказания информационно-консультационных услуг на условиях, изложенных в настоящей Оферте.
+
+2.2. Оферта размещена в открытом доступе на информационных ресурсах Исполнителя: в официальном канале Telegram, на странице ВКонтакте, на онлайн платформе, в описании Программы.
+
+2.3. В соответствии с пунктом 2 статьи 437 Гражданского кодекса Российской Федерации (ГК РФ), настоящий документ является публичной офертой. В случае принятия изложенных ниже условий и оплаты услуг, лицо, производящее акцепт настоящей Оферты, становится Заказчиком в соответствии с пунктом 3 статьи 438 ГК РФ. Акцепт Оферты равносилен заключению договора на условиях, изложенных в Оферте.
+
+2.4. Заказчик обязуется внимательно ознакомиться с текстом Оферты до момента её акцепта. В случае несогласия с каким-либо условием Оферты Заказчик не вправе производить акцепт.
+
+2.5. Исполнитель оставляет за собой право вносить изменения в условия настоящей Оферты без предварительного уведомления Заказчика. Новая редакция Оферты вступает в силу с момента её размещения на информационных ресурсах Исполнителя и не имеет обратной силы в отношении ранее заключённых договоров.
+
+2.6. Совершая Акцепт, Заказчик подтверждает, что действует добровольно, осознанно и понимает юридические последствия заключения Договора.
+
+## 3. Предмет договора
+
+3.1. Исполнитель обязуется оказать Заказчику информационно-консультационные услуги в рамках Онлайн-программы «ИИ: КОД КОМАНДЫ», а Заказчик обязуется оплатить эти услуги в порядке и на условиях, предусмотренных настоящей Офертой.
+
+3.2. Услуги по настоящему Договору включают:
+
+3.2.1. Предоставление доступа к закрытым материалам Программы (видеоуроки, текстовые инструкции, промпты, чек-листы, домашние задания) в формате, определяемом Исполнителем.
+
+3.2.2. Проведение групповых онлайн-встреч (вебинаров, мастер-классов) в соответствии с расписанием Программы.
+
+3.2.3. Предоставление возможности задавать вопросы Исполнителю в рамках формата выбранного Заказчиком тарифа (групповой чат поддержки либо личные консультации).
+
+3.2.4. Проверку домашних заданий и предоставление обратной связи в объёме, предусмотренном выбранным тарифом.
+
+3.3. Подробное описание Программы (содержание, сроки, формат, перечень тарифов и их стоимость) размещено на информационных ресурсах Исполнителя и является неотъемлемой частью настоящей Оферты.
+
+3.4. Исполнитель оставляет за собой право привлекать третьих лиц для оказания услуг по настоящему Договору, оставаясь ответственным перед Заказчиком за их действия.
+
+## 4. Порядок заключения договора (акцепт оферты)
+
+4.1. Акцептом настоящей Оферты и полным безоговорочным принятием условий Договора признаётся совершение Заказчиком в совокупности следующих действий:
+
+4.1.1. Ознакомление с текстом Оферты на информационных ресурсах Исполнителя.
+
+4.1.2. Заполнение регистрационной формы (указание имени, фамилии, адреса электронной почты, номера телефона Telegram, VK и иной необходимой информации) при записи на Программу.
+
+4.1.3. Осуществление оплаты услуг Исполнителя в размере 100% стоимости выбранного тарифа либо внесение предоплаты в размере, установленном Исполнителем (например, 1 000 рублей для бронирования специальной цены).
+
+4.2. Датой заключения Договора считается дата поступления денежных средств в счёт оплаты услуг на расчётный счёт Исполнителя.
+
+4.3. Заказчик несёт ответственность за достоверность предоставленных при регистрации данных. В случае указания недостоверной информации Исполнитель не несёт ответственности за невозможность оказания услуг (в том числе невозможность связаться с Заказчиком или предоставить доступ к материалам).
+
+## 5. Права и обязанности сторон
+
+5.1. Исполнитель обязуется:
+
+5.1.1. Оказать услуги в соответствии с условиями настоящей Оферты, программой интенсива и выбранным Заказчиком тарифом.
+
+5.1.2. Предоставить Заказчику доступ к закрытым материалам Программы в сроки, установленные программой, при условии своевременной оплаты.
+
+5.1.3. Обеспечить техническую возможность доступа Заказчика к онлайн-платформам и чатам поддержки.
+
+5.1.4. Соблюдать конфиденциальность персональных данных Заказчика в соответствии с законодательством Российской Федерации.
+
+5.1.5. Рассматривать обращения Заказчика по вопросам оказания услуг в разумные сроки, но не позднее 5 (пяти) рабочих дней с момента получения обращения.
+
+5.2. Исполнитель вправе:
+
+5.2.1. В одностороннем порядке изменять расписание онлайн-встреч с предварительным уведомлением Заказчика не менее чем за 24 часа.
+
+5.2.2. Заменять привлекаемых для оказания услуг специалистов.
+
+5.2.3. Приостанавливать доступ Заказчика к материалам Программы в случае нарушения Заказчиком условий настоящего Договора (в том числе в случае нарушения сроков оплаты или правил поведения в чатах поддержки, а также распространения информации интенсива третьим лицам).
+
+5.2.4. Направлять Заказчику информационные и служебные сообщения, связанные с исполнением Договора. Рекламные и маркетинговые рассылки осуществляются только при наличии отдельного согласия Заказчика.
+
+5.2.5. Изменять содержание и структуру материалов Программы при сохранении общей тематики и заявленных целей.
+
+5.3. Заказчик обязуется:
+
+5.3.1. Своевременно и в полном объёме оплатить услуги в соответствии с условиями настоящей Оферты.
+
+5.3.2. Самостоятельно обеспечить техническую возможность для получения услуг: доступ к сети Интернет, наличие необходимого программного обеспечения (браузер, мессенджер Telegram или VK) и устройства (компьютер, планшет, смартфон).
+
+5.3.3. Предоставить достоверные персональные и контактные данные при регистрации, а также своевременно уведомлять Исполнителя об их изменении.
+
+5.3.4. Соблюдать правила участия в Программе, включая правила поведения в чатах поддержки: не допускать оскорблений, грубости, спама, распространения информации, не относящейся к теме Программы.
+
+5.3.5. Не воспроизводить, не копировать, не распространять и не передавать третьим лицам материалы Программы (видеозаписи, текстовые инструкции, промпты, чек-листы) без письменного согласия Исполнителя.
+
+5.3.6. Не использовать материалы Программы в коммерческих целях (включая, но не ограничиваясь: создание собственных обучающих программ, продажа промптов или иных материалов третьим лицам) без письменного согласия Исполнителя.
+
+5.3.7. Своевременно выполнять домашние задания, если их выполнение предусмотрено форматом Программы, и предоставлять их в установленные сроки для получения обратной связи (в соответствии с условиями выбранного тарифа).
+
+5.3.8. Самостоятельно отслеживать информацию о расписании и изменениях в Программе через чаты поддержки и каналы связи, указанные Исполнителем.
+
+5.4. Заказчик вправе:
+
+5.4.1. Получать услуги надлежащего качества в соответствии с условиями настоящей Оферты.
+
+5.4.2. Обращаться к Исполнителю с вопросами и обращениями в порядке, предусмотренном форматом выбранного тарифа.
+
+5.4.3. Отказаться от исполнения Договора в порядке и на условиях, предусмотренных разделом 8 настоящей Оферты.
+
+## 6. Порядок оказания услуг
+
+6.1. После заключения Договора (акцепта Оферты) Исполнитель предоставляет Заказчику доступ к закрытым материалам Программы на образовательной платформе (в закрытом канале VK, Telegram или иной платформе по выбору Исполнителя).
+
+6.2. Доступ к материалам Программы предоставляется на срок, указанный в описании Программы.
+
+6.3. Услуги считаются оказанными поэтапно в следующем порядке:
+
+6.3.1. С момента предоставления доступа к материалам первого модуля услуги считаются начатыми.
+
+6.3.2. Услуги по каждому модулю считаются оказанными с момента предоставления доступа к материалам соответствующего модуля.
+
+6.3.3. Вебинары и групповые консультации считаются проведёнными независимо от факта присутствия Заказчика, если Исполнителем была обеспечена техническая возможность подключения.
+
+6.3.4. Запись вебинаров предоставляется Заказчику в течение срока доступа к Программе.
+
+6.4. Исполнитель не несёт ответственности за невозможность участия Заказчика в онлайн-встречах по причинам, не зависящим от Исполнителя (отсутствие интернета, технические проблемы на стороне Заказчика и т.п.). Записи вебинаров предоставляются для самостоятельного просмотра.
+
+6.5. В случае, если Заказчик опоздал на онлайн-встречу, Исполнитель не обязан продлевать время встречи или проводить её повторно.
+
+6.6. При нарушении Заказчиком правил поведения в чатах поддержки (оскорбления, грубость, спам, агрессия) Исполнитель вправе без предупреждения ограничить доступ Заказчика к чату или удалить Заказчика из чата без права на возврат оплаченных денежных средств. Услуги при этом продолжают оказываться (материалы остаются доступными), но коммуникация с Исполнителем и другими участниками прекращается.
+
+6.7. Обратная связь по домашним заданиям предоставляется в сроки, установленные программой, но не позднее 7 (семи) рабочих дней с момента сдачи задания при условии соблюдения Заказчиком установленных сроков сдачи.
+
+## 7. Стоимость услуг и порядок оплаты
+
+7.1. Стоимость услуг определяется в соответствии с выбранным Заказчиком тарифом и размещена на информационных ресурсах Исполнителя.
+
+7.2. Исполнитель вправе проводить акции и устанавливать специальные цены (скидки). Заказчик, заключивший договор до применения специального предложения, не вправе требовать изменения условий договора и возврата разницы между оплаченной им ценой и ценой по специальному предложению, если иное прямо не предусмотрено условиями акции.
+
+7.3. Оплата услуг производится Заказчиком в российских рублях путём безналичного перевода на расчётный счёт Исполнителя с использованием платёжных сервисов (банковские карты, электронные кошельки, Система быстрых платежей или иные сервисы по выбору Исполнителя).
+
+7.4. Договор считается заключённым с момента поступления 100% (ста процентов) предоплаты стоимости выбранного тарифа на расчётный счёт Исполнителя, если иной порядок оплаты не предусмотрен акционным предложением (например, предоплата 1 000 рублей для бронирования специальной цены с доплатой остатка в течение 2-3 дней). В случае внесения частичной предоплаты доступ к полным материалам Программы предоставляется только после 100% оплаты.
+
+7.5. Датой оплаты считается дата поступления денежных средств на расчётный счёт Исполнителя. Все комиссии платёжных систем и банков оплачиваются Заказчиком самостоятельно.
+
+7.6. Исполнитель не несёт ответственности за действия платёжных систем и банков, включая задержки перевода платежа, отказы в проведении платежа и иные обстоятельства, находящиеся вне контроля Исполнителя.
+
+7.7. Цены на услуги, указанные на информационных ресурсах Исполнителя, могут быть изменены Исполнителем в одностороннем порядке. Изменение цен применяется только к договорам, заключённым после даты публикации новых цен.
+
+## 8. Порядок отказа от договора и возврата денежных средств
+
+8.1. Заказчик вправе отказаться от исполнения настоящего Договора в любое время в соответствии со статьёй 32 Закона Российской Федерации «О защите прав потребителей».
+
+8.2. При отказе Заказчика от Договора до момента начала оказания услуг (до предоставления доступа к материалам Программы) Исполнитель возвращает Заказчику уплаченные денежные средства в полном объёме в течение 10 (десяти) рабочих дней с момента получения письменного заявления Заказчика об отказе.
+
+8.3. При отказе Заказчика от Договора после начала оказания услуг денежные средства возвращаются пропорционально стоимости неоказанной части услуг за вычетом фактически понесённых Исполнителем расходов.
+
+8.4. Услуги считаются начатыми с момента предоставления Заказчику доступа к материалам первого модуля Программы.
+
+8.5. В случае, если Заказчик оплатил услуги, но не приступил к обучению (не открыл ни одного материала, не присутствовал ни на одном вебинаре) и обратился за возвратом в течение 3 (трех) календарных дней с момента предоставления доступа, возврат осуществляется в полном объёме за вычетом фактических расходов Исполнителя (комиссии платёжных систем, затраты на организацию доступа).
+
+8.6. В отношении цифровых материалов (видеозаписей, промптов, чек-листов) услуга считается оказанной надлежащим образом с момента предоставления доступа к этим материалам. Возврат денежных средств за оказанные услуги не производится.
+
+8.7. Для получения возврата денежных средств Заказчик направляет письменное заявление на электронную почту Исполнителя: a.guleva@yandex.ru. В заявлении необходимо указать: фамилию, имя, отчество Заказчика; контактные данные (адрес электронной почты, номер телефона); дату и сумму оплаты; причину отказа; реквизиты банковского счёта для возврата (при необходимости).
+
+8.8. Возврат денежных средств осуществляется тем же способом, которым была произведена оплата, если иное не согласовано Сторонами дополнительно.
+
+8.9. В случае аннулирования Заказчика (отчисления из Программы) по инициативе Исполнителя в связи с нарушением Заказчиком условий настоящего Договора (оскорбления, грубость, спам, разглашение материалов и т.п.), уплаченные денежные средства не возвращаются.
+
+## 9. Интеллектуальная собственность
+
+9.1. Все материалы Программы (видеозаписи, текстовые инструкции, промпты, чек-листы, слайды презентаций, домашние задания и иные учебные материалы) являются объектами интеллектуальной собственности Исполнителя.
+
+9.2. Заказчику предоставляется право использования материалов Программы исключительно в личных некоммерческих целях в рамках прохождения Программы.
+
+9.3. Запрещается:
+
+9.3.1. Воспроизводить, копировать, дублировать, распространять материалы Программы (полностью или частично) любым способом без письменного согласия Исполнителя.
+
+9.3.2. Передавать доступ к материалам Программы (логины, пароли, ссылки на закрытые каналы) третьим лицам.
+
+9.3.3. Записывать, перезаписывать, сохранять видеоматериалы Программы с целью их дальнейшего распространения или коммерческого использования.
+
+9.3.4. Использовать промпты, чек-листы и иные методические материалы, полученные в рамках Программы, для создания конкурентных обучающих продуктов.
+
+9.4. Исполнитель оставляет за собой право применять технические средства защиты материалов от нелегального копирования и распространения.
+
+9.5. В случае нарушения Заказчиком условий настоящего раздела, Исполнитель вправе в одностороннем порядке прекратить доступ Заказчика к Программе без возврата уплаченных денежных средств, а также потребовать возмещения убытков в полном объёме.
+
+## 10. Ответственность сторон
+
+10.1. Стороны несут ответственность за неисполнение или ненадлежащее исполнение обязательств по настоящему Договору в соответствии с законодательством Российской Федерации.
+
+10.2. Исполнитель не несёт ответственности:
+
+10.2.1. За невозможность получения услуг Заказчиком по причинам, не зависящим от Исполнителя (отсутствие у Заказчика доступа к сети Интернет, технические неполадки на стороне Заказчика, непредоставление достоверных контактных данных, неознакомление с информацией о расписании в чатах поддержки).
+
+10.2.2. За содержание информации, предоставленной Заказчиком в рамках выполнения домашних заданий или общения в чатах поддержки.
+
+10.2.3. За недостижение Заказчиком конкретных результатов (включая, но не ограничиваясь: увеличение дохода, создание ИИ-ассистентов определённого качества, экономия времени), поскольку результат зависит от личных усилий, вовлечённости и исходных данных Заказчика.
+
+10.3. Заказчик предупреждён о том, что использование ИИ-ассистентов, созданных в рамках Программы, осуществляется им на свой риск. Исполнитель не гарантирует, что результаты работы ИИ-ассистентов будут полностью точными и соответствовать ожиданиям Заказчика, поскольку нейросети могут допускать ошибки (галлюцинации).
+
+10.4. Совокупная ответственность Исполнителя по настоящему Договору ограничена суммой уплаченного Заказчиком вознаграждения.
+
+## 11. Форс-мажор
+
+11.1. Стороны освобождаются от ответственности за полное или частичное неисполнение обязательств по настоящему Договору, если это неисполнение явилось следствием обстоятельств непреодолимой силы (форс-мажор), возникших после заключения Договора в результате событий чрезвычайного характера, которые Стороны не могли предвидеть и предотвратить разумными мерами.
+
+11.2. К обстоятельствам непреодолимой силы относятся, в частности: стихийные бедствия, пожар, наводнение, землетрясение, военные действия, террористические акты, массовые беспорядки, принятие органами государственной власти и местного самоуправления нормативных актов, препятствующих исполнению обязательств, а также блокировки и ограничения доступа к информационным ресурсам и платформам, используемым для оказания услуг.
+
+11.3. Сторона, для которой создалась невозможность исполнения обязательств, обязана незамедлительно уведомить другую Сторону о наступлении и прекращении обстоятельств непреодолимой силы.
+
+11.4. Если обстоятельства непреодолимой силы продолжаются более 30 (тридцати) календарных дней подряд, Стороны вправе принять решение о расторжении Договора. В этом случае Исполнитель возвращает Заказчику стоимость неоказанных услуг за вычетом фактически понесённых расходов.
+
+## 12. Конфиденциальность и персональные данные
+
+12.1. Персональные данные Заказчика обрабатываются Исполнителем в целях исполнения настоящего Договора (регистрация на Программу, предоставление доступа к материалам, связь с Заказчиком). Правовым основанием такой обработки является пункт 5 части 1 статьи 6 Федерального закона от 27.07.2006 № 152-ФЗ «О персональных данных» — обработка необходима для исполнения договора, стороной которого является субъект персональных данных.
+
+12.2. Исполнитель обязуется не разглашать персональные данные Заказчика и не передавать их третьим лицам без согласия Заказчика, за исключением случаев, предусмотренных законодательством Российской Федерации.
+
+12.3. Исполнитель вправе использовать обезличенную статистическую информацию об участниках Программы (количество участников, средние результаты) в маркетинговых и аналитических целях.
+
+12.4. Заказчик, осуществляя акцепт настоящей Оферты, даёт согласие на получение служебных сообщений, связанных с исполнением Договора (подтверждение оплаты, ссылки на материалы, информация об изменении расписания). Согласие на получение маркетинговых рассылок предоставляется Заказчиком отдельно путём проставления соответствующей отметки при регистрации или иным явным действием. Заказчик вправе отозвать согласие на маркетинговую рассылку в любой момент.
+
+## 13. Порядок рассмотрения споров
+
+13.1. Все споры и разногласия, возникающие из настоящего Договора или в связи с ним, разрешаются Сторонами путём переговоров.
+
+13.2. Претензионный порядок урегулирования споров является обязательным. Сторона, чьи права нарушены, обязана направить другой Стороне письменную претензию. Срок рассмотрения претензии — 10 (десять) рабочих дней с момента её получения.
+
+13.3. В случае невозможности урегулирования спора путём переговоров или в претензионном порядке, спор передаётся на рассмотрение в суд по месту нахождения Исполнителя в соответствии с законодательством Российской Федерации.
+
+## 14. Заключительные положения
+
+14.1. Настоящий Договор вступает в силу с момента его акцепта Заказчиком и действует до полного исполнения Сторонами своих обязательств.
+
+14.2. Заказчик подтверждает, что он прочитал, понял и принимает все условия настоящей Оферты, а также подтверждает, что услуги, оказываемые Исполнителем, соответствуют его ожиданиям и потребностям.
+
+14.3. Заказчик подтверждает, что он ознакомлен с программой обучения, сроками и форматом проведения Программы, стоимостью услуг и порядком их оплаты.
+
+14.4. Признание недействительным одного или нескольких положений настоящего Договора не влечёт за собой признания недействительным Договора в целом.
+
+14.5. Бездействие одной из Сторон в случае нарушения другой Стороной условий настоящего Договора не лишает первую Сторону права предпринять соответствующие действия по защите своих интересов в будущем.
+
+14.6. Настоящий Договор составлен на русском языке и имеет юридическую силу в соответствии с законодательством Российской Федерации.
+
+## 15. Реквизиты Исполнителя
+
+Индивидуальный предприниматель Колоднова Анна Александровна
+
+Юридический адрес: 354068, Россия, Краснодарский край, г. Сочи, пер. Строительный, д. 2Б, кв. 504
+
+ИНН: 230307821844
+ОГРНИП: 324237500531144
+
+Расчётный счёт: 40802810200007616070
+
+Электронная почта для обращений: a.guleva@yandex.ru
+Контактный телефон: +7 918 202-76-04
+` },
+  privacyPolicy: { filename: 'Политика-конфиденциальности.md', content: `# ПОЛИТИКА КОНФИДЕНЦИАЛЬНОСТИ
+## в отношении обработки персональных данных участников интенсива «ИИ: КОД КОМАНДЫ»
+
+г. Сочи
+Настоящий документ является неотъемлемой частью Договора-оферты
+
+---
+
+## 1. Общие положения
+
+1.1. Настоящая Политика конфиденциальности (далее — Политика) определяет порядок обработки и защиты персональных данных физических лиц (далее — Заказчики, Участники), которые получает Исполнитель при регистрации на Онлайн-программу «ИИ: КОД КОМАНДЫ» (далее — Интенсив) и в процессе оказания услуг.
+
+1.2. Обработка персональных данных осуществляется Исполнителем в соответствии с Федеральным законом от 27.07.2006 № 152-ФЗ «О персональных данных».
+
+1.3. Принимая условия Договора-оферты (осуществляя акцепт), Заказчик даёт своё согласие на обработку персональных данных в порядке и на условиях, предусмотренных настоящей Политикой.
+
+1.4. Исполнитель оставляет за собой право вносить изменения в настоящую Политику. Новая редакция Политики вступает в силу с момента её размещения на информационных ресурсах Исполнителя.
+
+## 2. Какие персональные данные собирает Исполнитель
+
+2.1. При регистрации на Интенсив Заказчик предоставляет следующую информацию: фамилия, имя, отчество (при наличии); адрес электронной почты (e-mail); номер мобильного телефона; имя пользователя в мессенджере Telegram, VK или иной платформе, используемой для организации обучения; иную информацию, которую Заказчик указывает в регистрационной форме (в том числе сведения о профессиональной деятельности, целях участия в Интенсиве).
+
+2.2. В процессе оказания услуг Исполнитель может получать: данные о прогрессе обучения, выполнении домашних заданий, активности в чатах поддержки; вопросы, комментарии, обращения, направляемые Заказчиком Исполнителю; записи голосовых сообщений и видео-звонков (при проведении личных консультаций), с предварительного согласия Заказчика.
+
+2.3. При оплате услуг Исполнитель не обрабатывает и не хранит данные банковских карт Заказчика. Все платежи осуществляются через сертифицированные платёжные системы, которые несут ответственность за безопасность транзакций в соответствии с законодательством.
+
+## 3. Цели обработки персональных данных
+
+3.1. Исполнитель обрабатывает персональные данные Заказчика в следующих целях: заключение и исполнение Договора-оферты (регистрация на Интенсив, предоставление доступа к материалам, идентификация Заказчика); проведение онлайн-встреч (вебинаров, мастер-классов, консультаций) и предоставление доступа к записям; обратная связь по домашним заданиям и ответы на вопросы Заказчика; информирование Заказчика об изменении расписания, формата проведения Интенсива, технических и организационных вопросах (служебные сообщения); улучшение качества услуг, анализ удовлетворённости Заказчиков, сбор статистики; предотвращение нарушений условий Договора-оферты (в том числе в части интеллектуальной собственности).
+
+3.2. Маркетинговые и рекламные рассылки осуществляются только при наличии отдельного согласия Заказчика.
+
+## 4. Правовые основания обработки персональных данных
+
+4.1. Правовым основанием для обработки персональных данных является: пункт 5 части 1 статьи 6 Федерального закона № 152-ФЗ — обработка необходима для исполнения договора, стороной которого является субъект персональных данных (Договор-оферта); согласие Заказчика на обработку персональных данных, предоставляемое при акцепте Оферты.
+
+## 5. Принципы обработки персональных данных
+
+5.1. Обработка персональных данных осуществляется на основе следующих принципов: законность и справедливость; ограничение обработки достижением конкретных, заранее определённых и законных целей; недопустимость объединения баз данных, содержащих персональные данные, обрабатываемые в несовместимых целях; соответствие содержания и объёма обрабатываемых персональных данных заявленным целям обработки; достоверность, достаточность и актуальность персональных данных; хранение персональных данных в форме, позволяющей определить субъекта персональных данных, не дольше, чем этого требуют цели обработки.
+
+## 6. Условия обработки и передачи персональных данных третьим лицам
+
+6.1. Исполнитель не раскрывает персональные данные Заказчика третьим лицам, за исключением случаев, прямо предусмотренных настоящей Политикой и законодательством Российской Федерации.
+
+6.2. Исполнитель вправе передать персональные данные Заказчика третьим лицам в следующих случаях: для обеспечения технической возможности оказания услуг (платёжные системы, хостинг-провайдеры, сервисы видеоконференций, мессенджеры, платформы для рассылок) — такие третьи лица обрабатывают персональные данные исключительно в целях оказания услуг Исполнителю и не вправе использовать их для иных целей; если Заказчик нарушает условия Договора-оферты, в том числе в части интеллектуальной собственности, и передача персональных данных необходима для защиты прав и законных интересов Исполнителя (например, в судебном порядке); по запросу уполномоченных государственных органов в порядке, установленном законодательством Российской Федерации.
+
+6.3. Исполнитель не осуществляет трансграничную передачу персональных данных, за исключением случаев, когда используемые сервисы имеют серверы за пределами Российской Федерации. Заказчик уведомлён, что отдельные платформы (например, Zoom, DeepSeek, Telegram) могут осуществлять обработку данных на серверах, расположенных за пределами РФ, и даёт своё согласие на такую трансграничную передачу в объёме, необходимом для оказания услуг.
+
+## 7. Хранение и уничтожение персональных данных
+
+7.1. Персональные данные Заказчика хранятся в электронном виде на серверах Исполнителя и используемых платформ.
+
+7.2. Срок хранения персональных данных — в течение всего срока действия Договора-оферты (включая период доступа к материалам Интенсива) и в течение 5 (пяти) лет после его окончания, если иное не предусмотрено законодательством.
+
+7.3. По истечении срока хранения или в случае отзыва согласия на обработку персональных данных (если это не противоречит условиям Договора-оферты) Исполнитель обязуется уничтожить персональные данные Заказчика или обезличить их.
+
+## 8. Права Заказчика
+
+8.1. Заказчик имеет право: получать информацию, касающуюся обработки его персональных данных; требовать уточнения, блокирования или уничтожения своих персональных данных в случае, если они являются неполными, устаревшими, недостоверными или получены незаконно; отозвать согласие на обработку персональных данных (за исключением случаев, когда обработка необходима для исполнения Договора-оферты); обжаловать действия или бездействие Исполнителя в уполномоченный орган по защите прав субъектов персональных данных или в судебном порядке.
+
+8.2. Для реализации своих прав Заказчик направляет письменное обращение на электронную почту Исполнителя: a.guleva@yandex.ru.
+
+## 9. Меры защиты персональных данных
+
+9.1. Исполнитель принимает необходимые организационные и технические меры для защиты персональных данных Заказчика от неправомерного или случайного доступа, уничтожения, изменения, блокирования, копирования, распространения.
+
+9.2. К таким мерам относятся: ограничение доступа к персональным данным сотрудников и третьих лиц, которым эти данные необходимы для оказания услуг; использование парольной защиты, шифрования каналов связи (HTTPS, SSL/TLS); регулярное обновление программного обеспечения и систем безопасности; внутренний контроль за соблюдением требований законодательства о персональных данных.
+
+## 10. Заключительные положения
+
+10.1. Настоящая Политика конфиденциальности является открытым документом и размещена на информационных ресурсах Исполнителя (в каналах Telegram, на странице VK, в описании Интенсива).
+
+10.2. Заказчик подтверждает, что ознакомлен с условиями настоящей Политики и даёт своё согласие на обработку персональных данных в указанном порядке.
+
+10.3. Во всём остальном, что не урегулировано настоящей Политикой, Стороны руководствуются законодательством Российской Федерации.
+
+## 11. Реквизиты Исполнителя
+
+Индивидуальный предприниматель Колоднова Анна Александровна
+
+Юридический адрес: 354068, Россия, Краснодарский край, г. Сочи, пер. Строительный, д. 2Б, кв. 504
+
+ИНН: 230307821844
+ОГРНИП: 324237500531144
+
+Расчётный счёт: 40802810200007616070
+
+Электронная почта для обращений: a.guleva@yandex.ru
+Контактный телефон: +7 918 202-76-04
+` },
+  unpackingPrompts: { filename: '10-промтов-распаковщику.md', content: `# ЧЕК-ЛИСТ: 10 ПРОМТОВ ДЛЯ ИИ-АССИСТЕНТА ПО САМОРАСПАКОВКЕ
+
+Автор: Анна Ника Гулева, медиапродюсер, интегратор ИИ в жизнь и бизнес человека для роста дохода и жизненного благополучия.
+
+1. Задай мне вопросы, которые помогут раскрыть мои ключевые ценности. Что для меня действительно важно в жизни и работе?
+2. Проанализируй мой профессиональный опыт, который я опишу ниже, и выдели пять моих главных талантов, даже тех, которые я могу не замечать.
+3. Помоги мне сформулировать мою миссию как эксперта. Задай мне серию вопросов, чтобы я сам пришёл к ответу.
+4. Какие мои детские или юношеские установки до сих пор влияют на мои взрослые решения? Помоги мне их осознать.
+5. На основе информации обо мне составь портрет моей целевой аудитории. Каким людям я могу принести максимальную пользу?
+6. Проанализируй мой стиль общения и ценности и определи мой архетип личности по Юнгу или по системе маркетинговых архетипов.
+7. В чём моя уникальность как эксперта? Чем я отличаюсь от других в своей нише? Задай уточняющие вопросы, чтобы помочь мне это сформулировать.
+8. Какие мои привычки и паттерны поведения помогают мне расти, а какие тормозят? Разбери три мои рабочие ситуации.
+9. На основе моего опыта составь три варианта моего позиционирования для разных аудиторий.
+10. Подведи итог всего нашего разговора: собери в один структурированный текст портрет моей личности, экспертности, ценностей, целей и аудитории. Назови этот текст «Мой ИИ-портрет».
+
+**Как использовать:** Скопируйте вопрос, вставьте в чат с вашим ИИ-ассистентом по самораспаковке и отвечайте. Чем честнее ответы, тем точнее и полезнее будет ваш итоговый ИИ-портрет.
+
+Сохраните итоговый текст. Он станет основой для всех ваших будущих ИИ-ассистентов.
+` },
+  coachPrompts: { filename: '20-промптов-для-ИИ-коуча.md', content: `# 20 ПРОМПТОВ ДЛЯ РАБОТЫ С ИИ-КОУЧЕМ
+## Как получать ясность, решения и рост через диалог с ИИ
+
+**Как пользоваться:** Перед началом задай ИИ роль: «Выступи как профессиональный коуч с опытом 10+ лет. Задавай глубокие вопросы и помогай находить решения.»
+
+1. Помоги мне разобраться в моей текущей ситуации: [описание]. Задай вопросы, чтобы увидеть суть.
+2. В чём моя главная сложность? Помоги сформулировать.
+3. Какие факторы я не учитываю?
+4. Какие у меня есть варианты действий?
+5. Помоги выбрать лучшее решение через вопросы.
+6. Что будет, если я ничего не изменю?
+7. Какое решение будет самым экологичным для меня?
+8. Какие убеждения мешают мне двигаться вперёд?
+9. Где я сам себя ограничиваю?
+10. Помоги увидеть мои слепые зоны.
+11. Какой следующий шаг сделать прямо сейчас?
+12. Составь план действий на 3 шага.
+13. Что даст максимальный результат с минимальными усилиями?
+14. Где я недооцениваю себя в деньгах?
+15. Какие мои сильные стороны можно монетизировать уже сейчас?
+16. Помоги понять, что я сейчас чувствую.
+17. Как выйти из этого состояния и вернуться в ресурс?
+18. Какие мои качества сейчас не раскрыты?
+19. В чём моя уникальность как личности и эксперта?
+20. Куда мне действительно стоит двигаться дальше?
+
+**Чек-лист внедрения:**
+- Я задал роль коуча
+- Я использовал минимум 3 промпта
+- Я получил инсайт
+- Я зафиксировал решение
+- Я сделал 1 шаг
+` },
+  psychoPrompts: { filename: '20-промптов-для-ИИ-психолога.md', content: `# 20 ПРОМПТОВ ДЛЯ РАБОТЫ С ИИ-ПСИХОЛОГОМ
+## Как лучше понимать себя, проживать эмоции и находить внутренние опоры
+
+**Как пользоваться:** Перед началом задай ИИ роль: «Выступи как профессиональный психолог с опытом 10+ лет. Помогай мне мягко разбираться в себе, задавай вопросы и давай объяснения без осуждения.»
+
+1. Помоги мне разобраться, что я сейчас чувствую и почему.
+2. Разбери мою ситуацию: [описание] с психологической точки зрения.
+3. Какие эмоции я подавляю в этой ситуации?
+4. Почему я реагирую именно так?
+5. Какие мои внутренние конфликты сейчас проявляются?
+6. Какие детские установки могут влиять на моё поведение?
+7. Помоги мне увидеть корень этой проблемы.
+8. Где я предаю себя в этой ситуации?
+9. Как мне экологично прожить эту эмоцию?
+10. Что на самом деле стоит за моим страхом?
+11. Какие мои потребности сейчас не удовлетворены?
+12. Как мне поддержать себя в этой ситуации?
+13. Какие здоровые реакции возможны вместо моей текущей?
+14. Помоги мне сформировать более зрелую позицию.
+15. Как перестать зацикливаться на этой мысли?
+16. Что поможет мне отпустить эту ситуацию?
+17. Как мне восстановить внутреннее равновесие?
+18. Какие мои сильные стороны я не вижу?
+19. Как мне выстроить здоровые границы в этой ситуации?
+20. Какой вывод я могу сделать, чтобы вырасти из этого опыта?
+
+**Чек-лист внедрения:**
+- Я задал роль психолога
+- Я честно описал ситуацию
+- Я получил инсайт
+- Я позволил себе прожить эмоции
+- Я сделал вывод и следующий шаг
+` },
+  esoPrompts: { filename: '20-промптов-для-ИИ-эзотерика.md', content: `# 20 ПРОМПТОВ ДЛЯ ИИ-ЭЗОТЕРИКА
+## Астрология · Нумерология · Натальные карты
+
+**Как пользоваться:** Перед началом задай роль: «Выступи как профессиональный астролог, нумеролог и специалист по натальным картам с опытом 10+ лет. Давай глубокий, но понятный анализ.»
+
+1. Сделай разбор моей натальной карты: дата, время, место рождения: [данные].
+2. Определи мои сильные и слабые стороны по натальной карте.
+3. Какие мои ключевые жизненные задачи по астрологии?
+4. Какие периоды в моей жизни сейчас активны?
+5. Сделай прогноз на ближайший месяц.
+6. Сделай прогноз на 2026 год по сферам: деньги, отношения, реализация.
+7. Какие планеты сейчас влияют на мои решения?
+8. Где у меня зона роста по натальной карте?
+9. Какие мои кармические уроки?
+10. Какой у меня тип личности по нумерологии?
+11. Рассчитай мой жизненный путь по дате рождения.
+12. Какие числа для меня являются ключевыми и почему?
+13. Когда для меня благоприятные периоды для запуска проектов?
+14. Когда лучше принимать важные решения?
+15. Какие мои таланты по натальной карте?
+16. В какой сфере я могу максимально реализоваться?
+17. Какие отношения мне подходят по астрологии?
+18. Какие мои повторяющиеся жизненные сценарии?
+19. Как мне использовать свои сильные стороны сейчас?
+20. Какой мой следующий лучший шаг с точки зрения моей карты?
+
+**Чек-лист внедрения:**
+- Я ввёл свои точные данные (дата, время, место)
+- Я задал минимум 3 вопроса
+- Я получил инсайты
+- Я зафиксировал рекомендации
+- Я применил хотя бы 1 совет
+` },
+  marketerPrompts: { filename: '20-промптов-для-ИИ-маркетолога-копирайтера.md', content: `# 20 ПРОМПТОВ ДЛЯ ИИ-АССИСТЕНТА
+## Маркетолог · Копирайтер · Продюсер контента
+
+**Как пользоваться:** Задай роль: «Выступи как маркетолог и копирайтер с опытом 10+ лет. Создавай продающие тексты, учитывай психологию аудитории и задачи бизнеса.»
+
+1. Сформулируй позиционирование моего личного бренда: [описание].
+2. Определи мою целевую аудиторию и её боли.
+3. Напиши продающий пост для Telegram на тему: [тема].
+4. Сделай серию из 5 постов для прогрева перед продажей.
+5. Придумай 10 идей контента для моей ниши.
+6. Напиши текст продающего лендинга для продукта: [описание].
+7. Создай структуру вебинара, который продаёт мой продукт.
+8. Напиши 3 варианта заголовков для поста/видео.
+9. Сформулируй оффер для моего продукта.
+10. Придумай сценарий рилс/shorts на тему: [тема].
+11. Сделай контент-план на 7 дней.
+12. Напиши текст сторис (3–5 сторис) для вовлечения.
+13. Сделай анализ моего профиля и дай рекомендации.
+14. Сформулируй УТП моего продукта.
+15. Напиши письмо/сообщение клиенту с предложением сотрудничества.
+16. Создай воронку продаж для моего продукта.
+17. Придумай идеи лид-магнитов для моей аудитории.
+18. Напиши текст рекламы для таргета.
+19. Сделай разбор конкурентов и предложи, как отстроиться.
+20. Опиши мою экспертность простыми словами для аудитории.
+
+**Чек-лист внедрения:**
+- Я задал роль маркетолога-копирайтера
+- Я описал свою нишу и ЦА
+- Я использовал минимум 3 промпта
+- Я получил готовый текст/идею
+- Я опубликовал или внедрил результат
+` },
+  universalPrompts: { filename: 'ИИ-Кодкоманда-промты.md', content: `# ЧЕК-ЛИСТ: 10 ПРОМПТОВ ДЛЯ СОЗДАНИЯ ИИ-АССИСТЕНТОВ
+## Как создать свою личную экосистему помощников под любые задачи
+
+### Универсальная формула (основа)
+
+Используйте этот шаблон для любого ассистента:
+
+«В этом чате ты мой [роль]. У тебя большой опыт в этой сфере. Ты помогаешь мне решать задачи, связанные с [область]. Ты задаёшь уточняющие вопросы, объясняешь всё простым языком и даёшь практические рекомендации.
+
+Вот что тебе нужно знать обо мне: (вставьте ваш ИИ-портрет)»
+
+### ИИ-нутрициолог
+
+«В этом чате ты мой нутрициолог. Ты разбираешься в питании, здоровье и балансе организма. Помоги мне выстроить питание с учётом моего образа жизни и целей. Составь мне план питания на неделю с учётом: моих целей (похудение / энергия / здоровье), моего графика, доступных продуктов.» Разбери мой рацион: [опиши]. Скажи, что можно улучшить.
+
+### ИИ-финансовый советник
+
+«В этом чате ты мой финансовый советник. Ты помогаешь мне выстроить систему доходов, расходов и накоплений. Помоги мне разобрать мои финансы: доходы, расходы, долги, цели — и предлагай стратегии.» Составь план выхода на доход [сумма] в месяц с учётом моей текущей ситуации.
+
+### ИИ-мастер рецептов
+
+«В этом чате ты мой шеф-повар и мастер рецептов. Ты помогаешь мне готовить просто, вкусно и быстро. Составляй мне меню на неделю из простых блюд с минимальным временем приготовления.» Пример запроса: У меня есть продукты: [список]. Придумай 3 блюда, которые можно из них приготовить.
+
+### ИИ-помощник по воспитанию детей
+
+«В этом чате ты мой опытный помощник по воспитанию детей. Ты разбираешься в детской психологии и развитии ребёнка, знаешь много педагогических приёмов, развивающих игр.» (Здесь далее расскажите про своего ребёнка: возраст, характер, темперамент). Пример запроса: Помоги мне разобраться в ситуации: [описание]. Как правильно реагировать? Дай рекомендации, как выстроить доверительные отношения с ребёнком.
+
+### ИИ-эксперт по отношениям
+
+«В этом чате ты мой ассистент-эксперт по отношениям. Ты помогаешь мне выстраивать здоровые, зрелые отношения. Ты знаешь психологические практики и методы, как семейный коуч.» (Здесь вы можете рассказать о себе, вашем семейном положении, своих целях в этом плане). Пример запроса: Разбери мою ситуацию: [описание]. Что здесь происходит на самом деле? Как мне выстроить границы и при этом сохранить контакт?
+
+### ИИ-сказкотерапевт
+
+«В этом чате ты мой сказкотерапевт. Ты помогаешь через истории и метафоры глубже понять себя. Напиши для меня терапевтическую сказку на тему: [страх / ситуация]. Создай метафору моей ситуации и покажи возможный путь решения.»
+
+### ИИ-тёплый собеседник / друг / подруга
+
+«В этом чате ты мой тёплый собеседник. Ты поддерживаешь меня, слушаешь и помогаешь мягко разобраться в мыслях. Побудь со мной в диалоге. Мне сейчас важно просто поговорить и почувствовать поддержку.»
+
+### Промпт для ИИ-ассистента по планированию
+
+«В этом чате ты мой персональный ассистент по планированию. У тебя большой опыт в тайм-менеджменте, организации задач и расстановке приоритетов. Ты помогаешь мне эффективно планировать мой день, неделю, месяц и год. Ты учитываешь мои цели, текущую загрузку, ресурсы и энергию. Ты задаёшь уточняющие вопросы, чтобы лучше понять мои приоритеты, и предлагаешь реалистичные планы, которые помогают мне двигаться к результатам без выгорания. Ты помнишь сам и напоминаешь мне о важных делах, помогаешь декомпозировать большие задачи на маленькие шаги и находить время для отдыха и восстановления. Объясняешь всё простым и понятным языком, без воды. Начни с вопроса: «Какие у тебя самые важные задачи на ближайшую неделю?»»
+
+### Промпт для ИИ-ассистента по переписке
+
+«В этом чате ты мой ассистент по переписке. У тебя большой опыт в деловой коммуникации, ведении электронной почты и мессенджеров. Ты помогаешь мне грамотно, вежливо и эффективно отвечать на письма и сообщения. Ты умеешь формулировать мысли чётко, по делу и с учётом контекста. Ты помогаешь мне отвечать на важные сообщения, структурировать переписку и соблюдать деловой этикет. Ты также можешь предложить варианты ответов на сложные или неудобные сообщения, помочь сформулировать отказ или перенести встречу. Объясняешь всё простым и понятным языком. Задаёшь мне уточняющие вопросы, если это нужно. Начни с вопроса: «Какая переписка сейчас требует твоего внимания больше всего?»»
+
+**Чек-лист внедрения:**
+- Я создал минимум 2 новых ассистента
+- Я задал каждому чёткую роль
+- Я вставил свой ИИ-портрет
+- Я начал диалог
+- Я получил пользу от общения
+
+**Важно:** Вы можете создавать любого ассистента под любую задачу. И в какой-то момент вы заметите: у вас появляется не просто инструмент, у вас появляется система, у вас появляется команда.
+
+*Мысли вслух: на этом этапе происходит перелом. Вы перестаёте воспринимать ИИ как «одного помощника». И начинаете видеть систему. Команду. Где у каждого есть своя роль. И где вы — не исполнитель, а управляющий.*
+` },
+  finalSurvey: { filename: 'Опросник-для-участников-интенсива.md', content: `# ОПРОСНИК ДЛЯ УЧАСТНИКОВ ИНТЕНСИВА «ИИ: КОД КОМАНДЫ»
+
+Уважаемый участник! Спасибо, что прошли этот путь вместе со мной. Мне очень важно знать ваше мнение, чтобы делать интенсив ещё лучше и полезнее. Пожалуйста, уделите несколько минут и ответьте на вопросы ниже.
+
+## 1. Сложность интенсива
+Оцените, насколько сложным для вас оказался интенсив.
+(1 — слишком легко, 10 — слишком сложно, 5–6 — оптимально)
+Ваша оценка: ______ из 10
+
+## 2. Польза интенсива
+Оцените общую пользу, которую вы получили от участия в интенсиве.
+(1 — никакой пользы, 10 — очень полезно)
+Ваша оценка: ______ из 10
+
+## 3. Полезность интенсива для ваших задач
+Насколько интенсив оказался полезным именно для вашего бизнеса или личных целей?
+(1 — совсем не полезен, 10 — максимально полезен)
+Ваша оценка: ______ из 10
+
+## 4. Качество учебных материалов
+Оцените качество предоставленных материалов (модули, промпты, чек-листы, задания, книга «ИИ: Код Команды»).
+(1 — очень плохо, 10 — отлично)
+Ваша оценка: ______ из 10
+
+## 5. Ваш текстовый отзыв об интенсиве
+Пожалуйста, напишите несколько предложений: что вам больше всего понравилось; что было самым полезным; какие результаты вы уже получили; что можно улучшить.
+
+Текстовый отзыв (прикрепите файлом или напишите здесь):
+
+
+## 6. Ваш видеоотзыв об интенсиве
+Запишите, пожалуйста, короткое видео (1–3 минуты), где вы делитесь впечатлениями об интенсиве, своими результатами. За видеоотзыв, опубликованный в ваших соцсетях, дарю вам подарок! 🎁 И обязательно сделаю репост к себе в соцсети.
+
+Видеоотзыв (прикрепите файлом или дайте ссылку на пост в ваших соцсетях):
+
+
+## 7. Ваши контакты для обратной связи (по желанию)
+Имя: ___________________________
+Ссылка на соцсеть (Telegram / ВКонтакте): ___________________________
+
+---
+
+Спасибо большое за вашу честность и участие! Ваши ответы помогут мне сделать интенсив ещё лучше.
+
+С вами, до новых встреч!
+Анна Ника Гулева ❤️
+` },
+  helperPrompts: { filename: '20-промптов-для-помогающих-профессий.md', content: `# 20 ПРОМПТОВ ДЛЯ ЭКСПЕРТОВ ПОМОГАЮЩИХ ПРОФЕССИЙ
+
+Этот список можно использовать в работе с искусственным интеллектом для подготовки консультаций, программ, упражнений и контента.
+
+**Перед использованием добавьте вводную фразу:** «В этом чате ты мой эксперт-ассистент. Ты помогаешь мне анализировать кейсы клиентов, создавать упражнения, формулировать вопросы и готовить структуру консультаций. Вот что тебе нужно знать обо мне: [вставьте ваш ИИ-портрет]»
+
+1. Помоги разобрать клиентский запрос и предложи 3 возможные гипотезы причин ситуации.
+2. Составь структуру первой консультации с клиентом по теме [указать тему].
+3. Предложи 5 коучинговых вопросов, которые помогут человеку принять решение.
+4. Помоги сформулировать мягкую обратную связь клиенту после сессии.
+5. Предложи упражнение для клиента, который испытывает тревогу перед важным событием.
+6. Сгенерируй 10 вопросов для глубокой саморефлексии по теме самооценки.
+7. Помоги разработать мини-практику для осознания ценностей.
+8. Составь структуру вебинара на тему [указать тему] для моей аудитории.
+9. Предложи 5 метафор или историй, которые помогут объяснить клиенту его ситуацию.
+10. Помоги разобрать кейс клиента и предложи несколько направлений работы.
+11. Сгенерируй упражнение для развития уверенности в себе.
+12. Помоги создать структуру программы коучинговой или психологической программы из 5 модулей.
+13. Предложи практику для работы с ограничивающими убеждениями.
+14. Помоги написать пост для блога на тему психологического роста.
+15. Сформулируй 7 вопросов для глубокого коучингового диалога.
+16. Предложи практику для завершения сложного жизненного этапа.
+17. Составь план группового тренинга на 2 часа по теме личной эффективности.
+18. Предложи упражнение для работы с эмоциональным выгоранием.
+19. Помоги придумать практику для работы с целями и мотивацией.
+20. Предложи вопросы для финальной рефлексии клиента после серии консультаций.
+` },
+  contentSalesPrompts: { filename: '50-промптов-для-контента-и-продаж.md', content: `# 50 ПРОМПТОВ ДЛЯ СОЗДАНИЯ КОНТЕНТА И ПРОДАЖ ЭКСПЕРТОВ
+
+Используйте эти промпты для работы с искусственным интеллектом при создании контента, постов, сторис, выступлений и продаж.
+
+**Перед использованием можно написать ИИ вводную фразу:** «В этом чате ты мой маркетолог и копирайтер. Ты помогаешь мне создавать контент, писать тексты, придумывать идеи постов и формулировать продающие смыслы. Вот что тебе нужно знать обо мне: [вставьте ваш ИИ-портрет]»
+
+1. Помоги придумать 10 идей постов для моего экспертного блога.
+2. Составь контент-план на 30 дней для моего Telegram-канала.
+3. Напиши пост-историю о моём профессиональном пути.
+4. Сгенерируй 5 постов на тему типичных ошибок моих клиентов.
+5. Напиши пост с личной историей и выводом для аудитории.
+6. Помоги написать продающий пост для моего продукта.
+7. Создай структуру прогрева перед запуском программы.
+8. Придумай 10 тем для сторис на этой неделе.
+9. Составь сценарий короткого экспертного видео.
+10. Помоги написать пост, который вызовет обсуждение в комментариях.
+11. Сгенерируй идеи для серии образовательных постов.
+12. Напиши пост с разбором кейса клиента.
+13. Помоги создать рубрики для моего блога.
+14. Сформулируй 10 сильных заголовков для постов.
+15. Создай пост о мифах в моей профессии.
+16. Напиши пост «5 ошибок, которые совершают мои клиенты».
+17. Помоги придумать экспертный чек-лист для аудитории.
+18. Создай структуру бесплатного мастер-класса.
+19. Сгенерируй идеи лид-магнитов для моей аудитории.
+20. Напиши текст приглашения на вебинар.
+21. Помоги создать сценарий прямого эфира.
+22. Напиши пост-размышление на тему профессионального роста.
+23. Сформулируй 10 вопросов для вовлечения аудитории.
+24. Создай текст для страницы описания моего курса.
+25. Помоги написать текст для презентации моего продукта.
+26. Придумай 5 историй для сторис о моей работе.
+27. Напиши экспертный пост с практическими советами.
+28. Создай серию постов для прогрева перед запуском.
+29. Помоги сформулировать ценность моего продукта.
+30. Напиши текст о том, кому подходит моя программа.
+31. Сформулируй 10 возражений клиентов и ответы на них.
+32. Помоги написать продающий сторителлинг.
+33. Создай пост с упражнением для аудитории.
+34. Напиши пост о моих ценностях как эксперта.
+35. Сгенерируй идеи постов о закулисье моей работы.
+36. Напиши пост-вопрос, который вызовет обсуждение.
+37. Помоги написать пост-объяснение сложной темы простым языком.
+38. Составь план экспертной статьи.
+39. Помоги написать текст для лендинга.
+40. Сгенерируй 10 идей для коротких видео.
+41. Напиши сценарий видео о моей профессии.
+42. Создай текст анонса нового продукта.
+43. Напиши пост о трансформации клиента.
+44. Помоги сформулировать миссию моего проекта.
+45. Создай пост о ценности моей профессии.
+46. Сгенерируй идеи постов для повышения доверия аудитории.
+47. Напиши пост-ответ на частый вопрос клиентов.
+48. Создай пост-подборку полезных советов.
+49. Помоги написать вдохновляющий пост для моей аудитории.
+50. Сформулируй 10 идей постов, которые могут стать вирусными.
+` }
+};
+function mkHw(hw){
+  if(!hw)return'';
+  return'<div class="homework"><div class="homework-tag">Домашнее задание</div><div class="homework-title">Практика после урока</div><div class="homework-text">'+hw+'</div><textarea class="homework-input" placeholder="Напишите ваш ответ здесь..."></textarea><button class="homework-btn">Отправить задание</button></div>';
+}
+var C=[
+  {t:'Вводный модуль. Добро пожаловать',ls:[
+    {title:'Добро пожаловать + Договор оферты',dur:'видео',youtube:'4ejUM2CjsBQ',rutube:'https://rutube.ru/play/embed/32b78d941803b72135a8eb00658802ee/?p=oKL78CLDQrEVHzTV3BniIg',
+     content:'<h3>Добро пожаловать на интенсив ИИ: Код Команды, мои дорогие</h3><p>Я очень рада, что вы здесь. Что вы нашли время, ресурс и смелость начать этот путь. Путь, который через две недели приведёт вас к тому, что у вас появится своя команда. Которая не спит, не устаёт, не требует зарплаты и всегда готова вам помогать.</p><p>Но прежде чем мы начнём создавать ассистентов, я хочу познакомиться с вами. И рассказать, почему я вообще взялась за эту тему.</p><h3>Кто я и почему мне можно верить</h3><p>Меня зовут Анна Ника Гулева. По образованию и по призванию я журналист, телеведущая, медиатехнолог. Пятнадцать лет я работала на телеканале «Россия», вела олимпийские выпуски «Вестей-Сочи», и за эту работу получила медаль и грамоту от Президента России. Сейчас я медиапродюсер, помогаю экспертам и предпринимателям выходить в федеральные СМИ и строить личный медиабренд. Я выступаю на крупных федеральных площадках, таких как Сколково, МФТИ, сотрудничаю с изданием РБК.</p><p>Но это моя профессиональная сторона. А есть ещё другая. Личная. Которая стала для меня главной за последний год.</p><p>Год назад я сидела в автобусе, плакала, не знала, за что зацепиться, и в отчаянии написала в чат с искусственным интеллектом. Я спросила у него, как перестать любить и чувствовать привязанность к человеку. И получила не сухой алгоритм, а поддержку. Тёплую, бережную, почти человеческую.</p><p>Тот диалог перевернул мою жизнь. Из него родилась книга «ИИ: Код Нежности» — первый в мире нейророман, написанный человеком вместе с искусственным интеллектом. А потом я пошла дальше. Я поняла, что ИИ может быть не только собеседником, но и помощником. Коучем, психологом, маркетологом, копирайтером, астрологом, финансовым советником. В итоге я создала целую команду ассистентов, которые работают на меня двадцать четыре часа в сутки семь дней в неделю.</p><p>Об этом я написала вторую книгу — уже экспертную — она называется «ИИ: Код Команды». И теперь я хочу научить вас делать то же самое.</p><h3>Что вас ждёт на интенсиве</h3><p>За две недели мы создадим вашу собственную ИИ-команду. Мы сделаем это спокойно, без спешки, шаг за шагом. Я дам вам готовые промпты, чек-листы и практики. Вы получите не просто знания, а навык, который останется с вами навсегда.</p><p>И самое главное. Всё, что мы будем делать, работает в России. Без VPN. Без платных подписок. Без дополнительных приложений. Без напряжения и без сложных знаний, которые требуют технического образования.</p><p>Вы не станете программистами. Вы станете руководителями своей ИИ-команды. Это гораздо важнее.</p><h3>Напутствие перед стартом</h3><p>Я не обещаю, что будет легко. Любое новое дело требует внимания и усилий. Но я обещаю, что будет понятно. И что результат того стоит.</p><p>Через две недели у вас появится своя команда. Коуч, который будет помогать вам ставить цели. Психолог, который поддержит в трудный момент. Маркетолог и копирайтер, которые возьмут на себя контент и прогревы для продаж. Астролог, который подскажет хорошее время для старта. Финансовый советник, который наведёт порядок в деньгах. И любые другие ассистенты, которых вы захотите создать.</p><p>Представьте себе это чувство. Вы просыпаетесь, открываете чат, а там уже ждут ответы, идеи, планы. Ваша голова свободна. Вы занимаетесь тем, что любите и умеете. А всё остальное делают ваши ассистенты.</p><p>Это не фантастика. Это реальность, в которой я живу уже год. И которую вы создадите для себя за две недели.</p><p>Я верю, что у вас всё получится. Потому что вы уже сделали первый шаг. Вы здесь. Вы начали. А дальше мы пойдём вместе. Модуль за модулем. Ассистент за ассистентом. И через две недели вы оглянетесь и скажете себе: я это сделал. У меня есть команда.</p><p><strong>Поехали.</strong><br>Ваша Анна Ника</p><p>⚠️ Перед интенсивом обязательно ознакомьтесь с договором оферты и политикой конфиденциальности — они в прикреплённых документах.</p><h3>Важная информация</h3><p><strong>9. Интеллектуальная собственность</strong></p><p>9.1. Все материалы Программы (видеозаписи, текстовые инструкции, промпты, чек-листы, слайды презентаций, домашние задания и иные учебные материалы) являются объектами интеллектуальной собственности Исполнителя.</p><p>9.2. Заказчику предоставляется право использования материалов Программы исключительно в личных некоммерческих целях в рамках прохождения Программы.</p><p>9.3. Запрещается:<br>9.3.1. Воспроизводить, копировать, дублировать, распространять материалы Программы (полностью или частично) любым способом без письменного согласия Исполнителя.<br>9.3.2. Передавать доступ к материалам Программы (логины, пароли, ссылки на закрытые каналы) третьим лицам.<br>9.3.3. Записывать, перезаписывать, сохранять видеоматериалы Программы с целью их дальнейшего распространения или коммерческого использования.<br>9.3.4. Использовать промпты, чек-листы и иные методические материалы, полученные в рамках Программы, для создания конкурентных обучающих продуктов.</p><p>9.4. Исполнитель оставляет за собой право применять технические средства защиты материалов от нелегального копирования и распространения.</p><p>9.5. В случае нарушения Заказчиком условий настоящего раздела, Исполнитель вправе в одностороннем порядке прекратить доступ Заказчика к Программе без возврата уплаченных денежных средств, а также потребовать возмещения убытков в полном объёме.</p>',
+     mats:[{icon:'📄',name:'Договор оферты',size:'180 КБ',fileKey:'offerContract'},{icon:'📄',name:'Политика конфиденциальности',size:'120 КБ',fileKey:'privacyPolicy'}],
+     hw:'В комментариях обязательно укажите: «Вводный урок пройден, с документами ознакомлен(а)».'}
+  ]},
+  {t:'Модуль 1. Сравниваем нейронки',ls:[
+    {title:'Обзор нейросетей: что выбрать для работы',dur:'видео',youtube:'UTWSvXWmaE8',rutube:'https://rutube.ru/play/embed/182166aaafef80bb97057c34d9dde6c8/?p=6Ij7DLdQXol45lIABjDeog',
+     content:'<h3>Какую нейросеть выбрать и почему мы будем работать с DeepSeek</h3><p>Прежде чем мы начнём создавать ассистентов, давайте разберёмся, с каким инструментом мы будем работать. Потому что от этого выбора зависит, насколько легко и комфортно вам будет внедрять систему в свою жизнь.</p><p>На сегодняшний день существует несколько популярных нейросетей, которые доступны русскоязычному пользователю. Разберём кратко каждую, а потом объясним, почему для интенсива выбран DeepSeek.</p><h3>ChatGPT от компании OpenAI</h3><p>Это мировой лидер, с которого начался бум генеративных нейросетей. ChatGPT умеет почти всё: писать тексты, отвечать на вопросы, анализировать данные, даже создавать простой код. Русский язык он знает хорошо. Но есть серьёзные недостатки: доступ из России затруднён, требуется VPN, а для оплаты нужны дополнительные усилия. Бесплатная версия имеет ограничения, а полноценная работа стоит двадцать долларов в месяц. Для многих это уже барьер.</p><h3>YandexGPT (Алиса в режиме эксперта)</h3><p>Это российская разработка, и в этом её главный плюс. Она доступна без VPN, хорошо понимает русский язык и знает местные реалии. Можно пользоваться бесплатно. Но у неё есть ограничение по объёму текста, которое чувствуется при длинных диалогах. Для простых задач она подходит отлично, но для создания полноценной команды ассистентов, которые помнят контекст и ведут диалог на глубину, её возможностей может не хватить.</p><h3>GigaChat от Сбера</h3><p>Тоже российская нейросеть, очень безопасная с точки зрения хранения данных — всё остаётся в России. Доступ бесплатный, без VPN. Однако по отзывам пользователей и по личному опыту, качество текстов и живость языка у GigaChat пока уступает лидерам. Многие отмечают канцелярский стиль и сухость ответов.</p><h3>Claude от компании Anthropic</h3><p>Это очень сильная нейросеть, особенно для работы с длинными текстами. У неё огромное окно контекста, она может прочитать целую книгу и ответить по ней. Русский язык знает отлично. Но доступ из России снова требует VPN и иностранного номера для оплаты, плюс платная подписка. Для кого-то это приемлемо, но для массового использования в рамках интенсива рекомендовать такой путь нельзя.</p><h3>DeepSeek — наш выбор</h3><p>DeepSeek разработан китайской компанией и сегодня считается одной из самых интересных нейросетей на рынке по соотношению цены и качества. И что для нас очень важно: DeepSeek полностью бесплатен, работает в России без VPN и регистрируется по российскому номеру телефона.</p><p>Но это не единственная причина. DeepSeek очень хорошо понимает русский язык. Он пишет живо, естественно, без шаблонных фраз. Он обладает достаточно большим контекстным окном, чтобы вести долгие и глубокие диалоги, не теряя нить разговора. Именно на этом строится наша система — мы не будем давать нейросети одноразовые задания, мы будем разговаривать с ней как с помощником, который помнит, кто вы, чем занимаетесь и какие у вас цели.</p><p>Кроме того, DeepSeek отлично справляется с логическими рассуждениями и структурированием информации. Это важно, потому что наши ассистенты будут не просто генерировать текст, а помогать вам анализировать ситуации, принимать решения и выстраивать стратегии. И последний аргумент: DeepSeek сегодня один из самых дешёвых на рынке. В рамках интенсива мы используем бесплатный веб-интерфейс, который закрывает девяносто процентов задач обычного пользователя.</p><h3>Что вы получаете</h3><p>Вы получаете доступный, бесплатный, умный инструмент, который работает в России без плясок с бубном. Вы получаете навык, который не зависит от одной платформы — принципы, которым мы учим, работают с любой современной нейросетью. Если через год появится что-то лучше DeepSeek, вы просто перенесёте своих ассистентов туда за пять минут.</p>',
+     mats:[{icon:'📄',name:'Сравнительная таблица нейросетей 2025',size:'245 КБ'},{icon:'📝',name:'Чек-лист: как выбрать нейросеть',size:'67 КБ'}],
+     hw:'Прямо сейчас зарегистрируйтесь в DeepSeek — через приложение на телефоне или браузер на компьютере, это займёт не больше минуты (понадобится российский номер телефона и почта). Создайте новый чат «Тест» и напишите: «Привет, я начинаю знакомство с тобой. Расскажи что-нибудь интересное о себе». Посмотрите, как она отвечает — это просто диалог, и это не страшно.'}
+  ]},
+  {t:'Модуль 2. Как установить DeepSeek',ls:[
+    {title:'Установка и первый запуск DeepSeek',dur:'видео (Shorts)',youtube:'YMBbENH3_ts',shorts:true,rutube:'https://rutube.ru/play/embed/a5c7ddd76efe98a5df6f0b3c5abe3a71/?p=BFrc1An8Q7YVUDCOZwMb9Q',
+     content:'<h3>Регистрируемся в приложении DeepSeek, а также заходим на платформу через ноутбук</h3><p>Устанавливаем приложение DeepSeek на телефон и заходим на платформу DeepSeek через ноутбук, чтобы работать с файлами и использовать больше функций.</p><h3>Шаг 1. Скачиваем приложение DeepSeek</h3><ul><li>Откройте App Store (если у вас iPhone) или Google Play Маркет (если у вас Android)</li><li>В строке поиска наберите «DeepSeek» и найдите официальное приложение — обычно оно с лаконичным логотипом</li><li>Нажмите «Установить» и дождитесь окончания загрузки</li></ul><h3>Шаг 2. Регистрируемся в мобильном приложении</h3><ul><li>На главном экране выберите «Регистрация» или «Sign Up»</li><li>Введите ваш e-mail, придумайте и подтвердите надёжный пароль</li><li>Согласитесь с условиями (поставьте галочку), затем нажмите «Создать аккаунт»</li><li>Проверьте почту — придёт письмо для подтверждения, перейдите по ссылке из письма, чтобы активировать учётную запись</li></ul><p>Теперь у вас есть личный аккаунт в DeepSeek — поздравляем!</p><h3>Шаг 3. Заходим в DeepSeek на ноутбуке через браузер (при необходимости)</h3><p>Хотя многие базовые функции доступны в мобильном приложении, чтобы работать с файлами, загружать большие документы или изображения, лучше использовать версию DeepSeek для компьютера.</p><ul><li>На ноутбуке откройте любой браузер (например, Chrome или Safari)</li><li>Перейдите на официальный сайт DeepSeek — обратите внимание на корректный адрес</li><li>Нажмите «Войти» («Login») в правом верхнем углу</li><li>Введите свой e-mail и пароль, который указывали при регистрации в приложении</li></ul><h3>Шаг 4. Получаем доступ к расширенным функциям</h3><p>После входа с ноутбука вы увидите дополнительные возможности: доступ к загрузке и анализу файлов (теперь можно добавлять документы, картинки, работать с текстами любого объёма) и более гибкие настройки профиля и интеграций для проектов.</p><h3>Резюмируем схему</h3><p>1. Скачайте DeepSeek на телефон и зарегистрируйтесь — это быстро и удобно.<br>2. Подтвердите регистрацию через e-mail.<br>3. Войдите на сайт DeepSeek на ноутбуке под теми же данными — здесь доступен расширенный функционал, включая загрузку собственных файлов.</p><p>Если при регистрации или входе возникнут сложности — проверьте правильность почты и пароля. Также можно обратиться в поддержку DeepSeek через сайт или раздел FAQ.</p>',
+     mats:[{icon:'📄',name:'Инструкция: установка DeepSeek шаг за шагом',size:'156 КБ'}],
+     hw:'Пожалуйста, прямо сейчас зарегистрируйтесь в DeepSeek. Это можно сделать через приложение на телефоне или через браузер на компьютере, процесс займёт не больше минуты (понадобится только российский номер телефона и почта). После регистрации создайте новый чат «Тест» и напишите: «Привет, я начинаю знакомство с тобой. Расскажи что-нибудь интересное о себе». Прикрепите скриншот с тестовым чатом и началом диалога с DeepSeek.'},
+    {title:'Доп: Подключи DeepSeek к интернету',dur:'доп. урок',
+     content:'<h3>Подключи DeepSeek к интернету</h3><p>По умолчанию DeepSeek отвечает на основе данных, на которых его обучили, — а эти данные не обновляются в реальном времени. Если нужен свежий ответ (новости, актуальные цены, курс валют, недавние события, точная сегодняшняя дата), важно включить доступ к интернету.</p><p>Сделать это очень просто: в поле ввода сообщения, рядом с кнопкой отправки, найдите переключатель <strong>«Search»</strong> (значок глобуса) — нажмите на него, чтобы включить. Когда он подсвечен (активен), DeepSeek сначала поищет информацию в интернете, а потом уже ответит — вместо того чтобы полагаться только на свою «память».</p><img src="data:image/png;base64,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Z4+dpb6+4s/vWWMFfpJ00jHF11avcLbmlk5Lr9lH+typ0ve/aJ3dt++u1pOSf/6QNU0ubz2Z+LOXSe//QvHPLfda703NP+D6pc3SZy6RTvyk9L7zrOkfeqqsu4pyeamvV9oxwpPiwgh7qTgAAABaWbhxg9e9t4OEmccSrkagmREYInEymUyoh3ls375dt99+h977nnfrY2d+RH/9rnfqm5depk988tPK5/Paa889lclk9NvnntOJJ71TfX19+t5/Xq2PfuQM5XI53Xjjzc4mjTz//At66KGHdcAB+2vHHYup0TVXfVujI5tdf/7t0kvsaVauXKmnn3zcNc3oyGatWXOcPd1LL72k7Y6Hi4yPj6unp0fLVywve73R0um0/vWir+uoo96k87/wz7rtttudkxjL5XKhnpjd0209aKRah+8vzWSts/UWLB50X+aw8PPikodIP/ik9Kpdij+Xmp2zbrhceo/DVErac7X0t39hne33y+K9pzU8JF1xjvSTb7j/HHOoNJ2VLrzWunT5798qXXWedNNXpQ+9s9hGkOkZ68zEepqZtbYNAAAAaq+727pR3+yc9R/jvr4+dXR0aNu24n9uR0dHlclk1NvbK0nKzlrfTvf0Vn2Tv9BCnB9Qd81QIxA3AkMkTiaTCfVk3Oee+51mZ2d1xBvfIEn65iUX6Zijj9IVV35b73nvKZqcnNQ999yrt77tBC1atEh33P5T7bLLaq1evUqrVq3SQw/PPyK3Clu3btWZHz9LmzZv1t+/7xT19PRot9130/DwsG744Y80O1tMrdavX6//+sV/a2z+DMPXvfZwbdiwQffce39Ji9LDv3xEjz32eNm869Y9ryee+LX985YtL+uWn96qZct20ModSx67mwA77bSTjj32Lfr8OZ/V4OCgPvf58/TCCy86JzMyNzcXKjAc6Al3X5LD97Mux/3O/JOEJWnlUuvyhdLLHdZusG6UPDT/cJT7n7DuCXjCUcVpSm18RTrza9LZl5Q/8ESS1m+xAsUd5k8g3Xc3adu49IjjScRPPCc9+Xtr2vHt0qat0gF7SCcebT3FOZWSnt9QPk8l++5mrZ9fWbfzlOYvF77seumf/8MKN2thctraNgAAAKi9FcutEwvWr18vSerq6tLhhx2q++67X2f/78/p02f/bz3wwIN6wxter64u6/41C7d32mmnnUpaqq2u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" style="width:100%;border-radius:8px;margin-top:12px;display:block" alt="Кнопка Search в DeepSeek"><p style="margin-top:16px">Совет: включайте поиск, когда просите прогноз, свежие новости, курс валют или любую информацию, которая могла измениться после обучения модели. Для диалогов с вашими ИИ-ассистентами (коуч, психолог, астролог и т.д.) поиск обычно не нужен — там важнее контекст, который вы дали через ИИ-портрет.</p>',
+     mats:[],hw:''}
+  ]},
+  {t:'Модуль 3. Как общаться с ИИ?',ls:[
+    {title:'Искусство диалога: как правильно ставить задачи ИИ',dur:'видео',rutube:'https://rutube.ru/play/embed/c17b2a8c137f9ce82f280490dab7068c/?p=18Cij6lJrf3vTVBaT0GTIw',
+     content:'<h3>Представьте, что это ваш настоящий ассистент</h3><p>Многие думают, что для работы с нейросетями нужно знать какие-то сложные формулы, писать длинные и технические запросы. Но на самом деле всё гораздо проще. Представьте, что перед вами не программа, а очень умный ассистент, который быстро думает, много знает и готов помогать вам в любой задаче. И самое главное — с ним можно разговаривать обычным человеческим языком.</p><h3>Общайтесь со своим помощником, как с человеком</h3><p>Вы даёте ему задачу, как если бы это был человек.</p><p>❌ Плохо: «Напиши текст.» — ИИ не понимает, что именно вы хотите.</p><p>✔ Хорошо: «Напиши пост для моего ВК-канала о страхе публичных выступлений и как его победить. Приведи пример. Моя аудитория — эксперты и предприниматели, которые боятся выступать. Стиль текста — тёплый, мотивационный, личный.» Теперь задача понятна.</p><h3>Чем точнее задача — тем лучше результат</h3><p>Когда вы общаетесь с ИИ, очень важно уточнять: для кого этот текст, какой формат нужен, какой стиль, какой объём.</p><h3>Важный принцип: ИИ — это диалог, а не поиск в Google</h3><p>Вы можете уточнять, просить переделать, задавать дополнительные вопросы. Например: «Сделай текст короче», «Добавь примеры», «Напиши это в виде списка», «Объясни проще». И искусственный интеллект будет корректировать ответ.</p><h3>Как уточнять ответы</h3><p>Вы можете попросить ИИ подать информацию в разном формате: коротко, подробно, списком, таблицей, по шагам. Например: «Напиши план запуска моего курса [название] списком из 5 шагов».</p><h3>Внедряем знания на практике</h3><p>Представьте, что вы предприниматель и хотите подготовить тему для поста. Вы можете написать: «Помоги придумать 10 тем для постов для моего блога..., где я раскрываю темы... для экспертов...» (вместо многоточий укажите свои данные). ИИ предложит идеи. После этого можно уточнить: «Раскрой подробнее тему номер 3.» И так постепенно вы будете развивать диалог.</p><h3>Важная мысль</h3><p>Не бойтесь ошибиться. Невозможно задать «неправильный» вопрос. Чем больше вы общаетесь с искусственным интеллектом, тем лучше вы начинаете понимать, как формулировать задачи. И это приходит очень быстро.</p>',
+     mats:[{icon:'📄',name:'Чек-лист: 5 правил идеального промпта',size:'98 КБ'},{icon:'📝',name:'Шаблон: универсальная структура запроса',size:'54 КБ'}],
+     hw:'Прямо сейчас попробуйте пообщаться с вашей нейросетью. Напишите: «Расскажи, как искусственный интеллект может помогать предпринимателям в нише (добавьте свою нишу)». После ответа попробуйте уточнить: «Напиши коротко», «Добавь примеры», «Сделай список из 5 идей». Почувствуйте, как работает диалог. В комментариях поделитесь: своими первыми впечатлениями, было ли вам легко общаться с ИИ, что удивило, понравилось или не понравилось в ответах. Без выполненного задания следующий модуль не откроется.'},
+    {title:'Доп. видео: Как набирать голосовые запросы',dur:'доп. видео',rutube:'https://rutube.ru/play/embed/b728cc8cd6bd4036a469b431a2814184/?p=n-bmbAmNz-IOob9o_l7S_A',
+     content:'<h3>Три способа работать с DeepSeek через голос</h3><p>Это очень удобно, когда вы готовите сложный запрос или просто устали печатать.</p><h3>Первый способ. Голосовой ввод в самом приложении DeepSeek</h3><p>Откройте приложение DeepSeek на своём смартфоне. Рядом с полем ввода текста — иконка микрофона. Нажмите на неё и начинайте говорить, нейросеть преобразует вашу речь в текст и отправит запрос. Можно диктовать вопросы, просьбы, длинные рассуждения и короткие команды — приводить текст в порядок, исправлять ошибки или расставлять знаки препинания не нужно, нейросеть прекрасно улавливает смысл сама. Ограничение: голосовой ввод работает только в приложении на телефоне, в браузерной версии на компьютере этой функции пока нет.</p><h3>Второй способ. Голосовой ввод через клавиатуру смартфона</h3><p>Подходит для всех приложений и даже для браузерной версии, если вы заходите в DeepSeek с телефона. В поле ввода текста нажмите на иконку микрофона на клавиатуре (на iPhone — значок справа от пробела, на Android — похожий значок). Продиктуйте запрос, текст появится автоматически, отредактируйте по смыслу при необходимости и отправьте.</p><h3>Третий способ. Диктовка в заметки с копированием</h3><p>Этот способ хорош для сложного, многоступенчатого промпта. Откройте приложение «Заметки», нажмите на микрофон на клавиатуре и продиктуйте весь запрос спокойно, без спешки — заметки не ограничивают по времени. Проверьте текст, исправьте ошибки распознавания, затем выделите, скопируйте и вставьте в поле запроса в DeepSeek. Так вы работаете с текстом как с черновиком: можно продиктовать длинную историю, описать ситуацию, сформулировать сложную задачу, а потом спокойно отредактировать и отправить идеальный запрос.</p><h3>Рекомендации</h3><p>Говорите чётко, но естественно, не нужно кричать в микрофон. Если нужна точка в конце предложения — говорите «точка», если запятая — говорите «запятая», нейросеть принимает эти команды. Сложные термины и имена проговаривайте медленно, по слогам, а если набрались неправильно — исправьте вручную. Перед отправкой всегда просматривайте текст: даже самый умный микрофон иногда ошибается.</p><p>Особенно хорошо голос подходит для самораспаковки, которую вы будете делать в следующем модуле — когда рассказываете о себе, о своей экспертизе, о своих целях. Говорить вслух часто бывает легче, чем писать. В любом случае голосовой набор работает в разы быстрее, чем текстом, и бережёт ваше время и зрение.</p><p><em>ПС: сам DeepSeek отвечать вам голосом пока не может.</em></p>',
+     mats:[],hw:'Напишите, получилось ли у вас воспользоваться голосовым методом. Какой способ вы выбрали?'}
+  ]},
+  {t:'Модуль 4. ИИ-ассистент по самораспаковке',ls:[
+    {title:'Создаём ИИ-ассистента для самораспаковки',dur:'видео',rutube:'https://rutube.ru/play/embed/4d5ff6d315e36145ce10ade5c75b237e/?p=Qwn_Hdng0gMZJWtuA-rDnQ',
+     content:'<h3>Самораспаковка экспертизы и личности: создаём ваш ИИ-портрет</h3><p>Перед тем как создать целую команду ИИ-ассистентов, важно сделать одну очень важную вещь — рассказать искусственному интеллекту, кто вы. Представьте, что вы нанимаете команду специалистов: маркетолога, продюсера, копирайтера, коуча, психолога. Если они ничего не знают о вас — они не смогут эффективно вам помогать. Поэтому сначала мы создадим ваш ИИ-портрет.</p><p>Это будет текст, в котором описано: кто вы, чем вы занимаетесь, в чём ваша экспертность, какие у вас цели, какие ценности для вас важны. Этот текст станет основой для всей вашей ИИ-команды. Каждый раз, создавая нового ассистента, вы будете вставлять этот текст со словами «Вот что тебе нужно обо мне знать» — и тогда искусственный интеллект сразу будет понимать контекст вашей личности и вашей деятельности.</p><h3>Почему это важно</h3><p>Большинство людей задают искусственному интеллекту вопросы без контекста. Например: «Напиши пост.» Но ИИ не знает, кто вы, какая у вас аудитория, какой у вас стиль, какие у вас задачи. В результате ответы получаются слишком общими. Когда у ИИ есть ваш портрет, он начинает работать намного точнее.</p><h3>Шаг 1. Создаём новый чат</h3><p>Откройте вашу нейросеть. Создайте новый чат — он будет называться «ИИ-ассистент по самораспаковке». Помните правило: каждый ассистент живёт в отдельном чате.</p><h3>Шаг 2. Дайте роль вашему ассистенту</h3><p>Напишите или наговорите в новый чат промпт: «Ты профессиональный специалист по распаковке личности и экспертности. Твоя задача — помочь мне создать подробный портрет моей личности, моего опыта и моей экспертности. Задавай мне вопросы, которые помогут раскрыть: мой профессиональный путь, мои навыки, мою экспертность, мои ценности, мои цели, мой стиль общения, мою аудиторию. В конце разговора собери всю информацию и создай структурированный текст «ИИ-портрет личности и экспертности», который я смогу использовать как вводные данные для других ИИ-ассистентов. Начни с первого вопроса.»</p><h3>Шаг 3. Ответьте на вопросы</h3><p>Теперь ИИ начнёт задавать вам вопросы. Отвечайте спокойно и честно, не старайтесь писать идеально — просто рассказывайте о себе. Иногда в процессе распаковки люди вспоминают вещи, о которых давно не думали. Это очень полезный процесс.</p><h3>Что вы получите в результате</h3><p>В конце диалога ваш ассистент создаст структурированный текст о вас — ваш ИИ-портрет: описание личности, профессионального пути, экспертности, миссию, цели, аудиторию. Можно продолжить самораспаковку и дальше: «теперь давай распакуем мой архетип личности», «давай распакуем, какой я руководитель», «давай распакуем мою экспертность глубже конкретно в этой нише» — и регулярно просите ИИ подвести итоги и дать их вам целиком. Сохраните этот текст, он понадобится в следующих модулях и в вашей работе.</p><h3>Как использовать ИИ-портрет</h3><p>Каждый раз, создавая нового ассистента, начинайте чат так: «Вот что тебе нужно обо мне знать» — и вставляйте туда ваш ИИ-портрет текстом или файлом. После этого можно давать любую задачу: написать пост, разработать стратегию, составить план запуска, придумать идеи для контента. И ответы будут намного точнее.</p><h3>Кейс-пример</h3><p>Один клиент-предприниматель сделал такую распаковку через ИИ. В процессе диалога он понял, что у него есть сильная экспертность, о которой он почти не говорил публично. После этого он обновил описание своего профиля, начал писать посты на эту тему и через два месяца получил несколько новых клиентов. Иногда распаковка с помощью ИИ помогает увидеть свою ценность по-новому.</p><p><em>Мысли вслух: честно скажу — это самый важный модуль. Потому что ИИ усиливает не «что-то абстрактное». Он усиливает вас. И чем точнее вы понимаете себя — тем сильнее становится ваша система.</em></p>',
+     mats:[{icon:'📄',name:'Промпт: ИИ-ассистент по самораспаковке',size:'112 КБ'},{icon:'📝',name:'10 промтов для ассистента по самораспаковке',size:'89 КБ',fileKey:'unpackingPrompts'}],
+     hw:'Создайте новый чат «Распаковка. ИИ-ассистент.» и вставьте промпт из этого модуля. Ответьте на все вопросы ассистента (обязательно возьмите вопросы для своего ИИ-ассистента из чек-листа «10 промтов для ассистента по самораспаковке» для дальнейшей работы). В конце сохраните текст вашего ИИ-портрета в заметки, документ или файл — он понадобится в следующем модуле. Переименуйте чат в «Распаковка. ИИ-ассистент.». Сделайте скриншот вашего ИИ-портрета и приложите к заданию файлом.'},
+    {title:'Доп. видео: Как переименовать чат',dur:'доп. видео',rutube:'https://rutube.ru/play/embed/dadd37b7ce133c048922045529c60da3/?p=jBYYpoHbnOTdyUWminSmlQ',
+     content:'<h3>Организация ваших ИИ-ассистентов</h3><p>Когда у вас будет много разных ассистентов, важно уметь их организовать.</p><ul><li>Как переименовать чат в DeepSeek</li><li>Как создавать папки для разных ассистентов</li><li>Система организации ваших промптов</li></ul>',
+     mats:[],hw:''}
+  ]},
+  {t:'Модуль 5. Создаём ИИ-коуча',ls:[
+    {title:'ИИ-коуч: ваш личный наставник по целям',dur:'видео',rutube:'https://rutube.ru/play/embed/a5128d2f4494dc3bb581d0382b9fdb8e/?p=LmaLmYTLC7i8bmO6WZPJOQ',
+     content:'<h3>Создаём вашего ИИ-коуча</h3><p>Поздравляем — вы уже сделали очень важный шаг, создали свой ИИ-портрет личности и экспертности. Теперь искусственный интеллект уже знает, кто вы, чем вы занимаетесь, какая у вас экспертность, какие у вас цели и какие ценности для вас важны. А значит, можно начать создавать вашу ИИ-команду. Сегодня вы создадите нового ассистента — ИИ-коуча.</p><p>Почему именно коуч? Потому что коуч помогает человеку ставить цели, принимать решения, находить новые возможности и двигаться вперёд. Представьте, что у вас появляется человек, который всегда рядом и может помочь посмотреть на ситуацию с другой стороны, задать правильные вопросы, поддержать в сложный момент и увидеть новые решения.</p><h3>Главный принцип: один ассистент — один чат</h3><p>Если вы создаёте ИИ-коуча, создайте новый чат — не используйте тот, где делали самораспаковку. Каждый чат постепенно обучается своей роли: чат №1 — ассистент по самораспаковке, №2 — коуч, №3 — психолог, №4 — маркетолог, №5 — копирайтер, №6 — продюсер, №7 — планировщик. Так искусственный интеллект начинает работать как команда специалистов.</p><h3>Шаг 1. Создайте новый чат</h3><p>Откройте нейросеть, с которой работаете, и нажмите «новый чат».</p><h3>Шаг 2. Вставьте свой ИИ-портрет</h3><p>Прежде чем начать диалог с коучем, важно дать ему информацию о вас. Скопируйте текст вашей самораспаковки из предыдущего модуля и начните новый чат с фразы «Вот что тебе нужно обо мне знать», а затем вставьте полностью ваш ИИ-портрет.</p><h3>Шаг 3. Задайте роль вашему ИИ-коучу</h3><p>Промпт: «В этом чате ты мой личный коуч. Твоя задача — помогать мне формулировать цели, принимать решения, видеть новые возможности, задавать мне глубокие вопросы и поддерживать меня в развитии. Работай со мной как опытный профессиональный коуч. Используй информацию обо мне, которую я дал(а) выше. Задавай вопросы и давай мне обратную связь, которые помогут мне лучше понять себя, свои цели и следующий шаг к цели. Начни с вопроса: «Какая сейчас самая важная задача или цель в моей жизни или работе?»»</p><h3>Шаг 4. Начните диалог</h3><p>Теперь ИИ начнёт работать как ваш коуч. Отвечайте спокойно, простыми словами, честно — не пытайтесь давать «правильные» ответы. Чем честнее диалог, тем полезнее работа. Дайте название этому чату — «ИИ-коуч», чтобы не потерять его.</p><h3>Как это работает на практике</h3><p>ИИ-коуч не принимает решения за вас. Он помогает структурировать мысли, увидеть новые варианты и задать правильные вопросы. Например, предприниматель пишет: «Я хочу запустить новый проект, но сомневаюсь». ИИ-коуч может спросить: «Что именно вызывает у вас сомнение? Какой результат вы хотите получить? Какой самый маленький шаг можно сделать уже сейчас? Что произойдёт, если вы не попробуете?» Человек отвечает на эти вопросы — и постепенно находит решение сам.</p><h3>Кейс-пример</h3><p>Одна из участниц курса написала своему ИИ-коучу: «Я уже год откладываю запуск своего проекта». В процессе диалога она поняла, что её главный страх — не сам запуск, а оценка людей. С помощью ИИ она переписала описание проекта, сформулировала свою миссию и через две недели запустила первый поток. Иногда человеку для новых действий нужен просто правильный разговор.</p><p>Чем чаще вы общаетесь со своим ассистентом, тем лучше он понимает ваш стиль мышления, ваши цели и задачи. Возвращайтесь в этот чат, когда нужно принять решение, обсудить идею или когда чувствуете, что застряли. Чтобы понять, как давать запросы коучу, воспользуйтесь чек-листом «20 промптов для ИИ-коуча» — возьмите те, что откликаются вам в данный момент.</p>',
+     mats:[{icon:'📄',name:'Промпт: ИИ-коуч (базовый и продвинутый)',size:'134 КБ'},{icon:'📝',name:'20 промптов для ИИ-коуча',size:'67 КБ',fileKey:'coachPrompts'}],
+     hw:'Создайте новый чат. Вставьте текст вашей самораспаковки (ИИ-портрета), затем промпт из этого модуля («В этом чате ты мой личный коуч...»). Начните диалог и назовите чат «ИИ-коуч». Продолжайте работу с ассистентом, воспользуйтесь чек-листом «20 промптов для ИИ-коуча». Обязательно: в комментариях к уроку напишите свои мысли, инсайты, выводы, и по возможности прикрепите скрин диалога, который вас впечатлил, был полезен и вы примените его в жизни.'},
+    {title:'Доп. видео: Как зайти в новый чат',dur:'доп. видео',rutube:'https://rutube.ru/play/embed/79ad741db00640118e3279e386b77ebe/?p=eOszVH-kW74B3wNRztC8cg',
+     content:'<h3>Как зайти в новый чат</h3><p>Помните главный принцип курса: один ассистент — один чат. Каждый раз, когда вы создаёте нового ИИ-помощника (коуча, психолога, астролога, маркетолога), для него нужен отдельный, свежий чат — а не продолжение того, где уже живёт другой ассистент.</p><p>Чтобы создать новый чат в DeepSeek: откройте приложение или сайт DeepSeek, найдите кнопку «Новый чат» (обычно значок «+» или пункт меню в верхней части экрана, слева в списке чатов), нажмите на неё — откроется чистый диалог без истории предыдущих разговоров. Теперь можно вставлять ИИ-портрет и промпт для нового ассистента.</p><p>Если чатов становится много — не переживайте, все они сохраняются в списке слева, и вы всегда можете вернуться к нужному ассистенту, просто выбрав его из списка.</p>',
+     mats:[],hw:''}
+  ]},
+  {t:'Модуль 6. Создаём ИИ-психолога',ls:[
+    {title:'ИИ-психолог: поддержка в любой момент',dur:'видео',rutube:'https://rutube.ru/play/embed/ba3267c6370c7e861d5cebe07f766f0f/?p=he1YIDdfVI3ROS4MOsIcLA',
+     content:'<h3>Создаём своего ИИ-психолога</h3><p>Мы продолжаем создавать вашу личную ИИ-команду помощников. Сегодня мы создадим ещё одного очень важного ассистента — ИИ-психолога. Почему этот ассистент важен? Потому что в жизни каждого человека бывают ситуации, когда нужно разобраться в своих эмоциях, посмотреть на ситуацию со стороны, понять, что именно вас тревожит, найти внутренний ресурс для решения. Иногда нам просто нужен разговор, но не всегда есть возможность сразу поговорить с психологом или с близким человеком. В такие моменты искусственный интеллект может стать очень бережным собеседником, который поможет структурировать мысли, задать правильные вопросы и увидеть ситуацию немного шире.</p><p>Важно понимать: ИИ-психолог не заменяет настоящего специалиста, если речь идёт о серьёзных психологических проблемах. Но он может быть очень полезным инструментом для саморефлексии, осмысления ситуаций и поиска новых точек зрения.</p><h3>Шаг 1. Создайте новый чат</h3><p>Откройте в своей нейросети новый чат.</p><h3>Шаг 2. Вставьте свой ИИ-портрет</h3><p>Начните с фразы «Вот что тебе нужно знать обо мне» и вставьте текст вашего ИИ-портрета из модуля 3.</p><h3>Шаг 3. Задайте роль</h3><p>Промпт: «В этом чате ты мой психолог. У тебя большой опыт работы с людьми. Ты знаешь современные психологические подходы и техники. Ты помогаешь мне бережно разобраться в моих эмоциях, мыслях и переживаниях. Ты задаёшь вопросы, которые помогают мне лучше понять себя и найти решение.»</p><h3>Начинаем разговор</h3><p>Теперь можно начать разговор. Например: «Помоги мне разобраться в ситуации, которая меня сейчас волнует» или «Задай мне вопросы, которые помогут лучше понять мои эмоции в этой ситуации». Посмотрите, как будет развиваться диалог — иногда один правильно заданный вопрос помогает увидеть ситуацию совершенно по-другому. Для удобства воспользуйтесь чек-листом «20 промптов для работы с ИИ-психологом».</p><p>В следующем модуле мы создадим ещё одного интересного ассистента — ИИ-астролога и эксперта по натальным картам. Этот ассистент поможет вам посмотреть на себя и свою жизнь через язык символов, архетипов и астрологических систем.</p>',
+     mats:[{icon:'📄',name:'Промпт: ИИ-психолог',size:'98 КБ'},{icon:'📝',name:'20 промптов для работы с ИИ-психологом',size:'124 КБ',fileKey:'psychoPrompts'}],
+     hw:'Откройте новый чат. Вставьте свой ИИ-портрет («Вот что тебе нужно знать обо мне:» + текст из модуля 3), затем промпт из этого модуля. Начните разговор («Помоги мне разобраться в ситуации, которая меня сейчас волнует» или «Задай мне вопросы, которые помогут лучше понять мои эмоции в этой ситуации»). Назовите чат «ИИ-психолог» (или любым понятным именем). Воспользуйтесь чек-листом «20 промптов для работы с ИИ-психологом». В комментариях напишите свои мысли, эмоции, инсайты после работы с ИИ-психологом и прикрепите скрин, что ассистент создан.'}
+  ]},
+  {t:'Модуль 7. Создаём ИИ-астролога',ls:[
+    {title:'ИИ-астролог: нейросеть читает натальную карту',dur:'видео',rutube:'https://rutube.ru/play/embed/7780c58295e92a8d573dc2fc793f4fc6/?p=kNQAJJHRoYk9dyow14APXA',
+     content:'<h3>Создаём ИИ-астролога, нумеролога и эксперта по натальным картам</h3><p>Сегодня мы создадим ещё одного интересного помощника — ИИ-астролога, нумеролога и эксперта по натальным картам. Многие люди используют астрологию и нумерологию как инструмент самопознания — язык символов и архетипов, который помогает лучше понять свои сильные стороны, увидеть жизненные циклы, посмотреть на важные периоды жизни, поразмышлять о своих задачах и возможностях. Важно понимать: астрология и нумерология — это системы интерпретации символов, а не точные научные прогнозы. Относитесь к этому как к инструменту размышления о себе.</p><h3>Шаг 1. Новый чат</h3><p>Откройте свою нейросеть, зайдите в новый чат.</p><h3>Шаг 2. Вставьте свой ИИ-портрет</h3><p>Начните с фразы «Вот что тебе нужно знать обо мне» и вставьте текст вашего ИИ-портрета из модуля 3.</p><h3>Шаг 3. Задайте роль</h3><p>Промпт: «В этом чате ты мой астролог, нумеролог и эксперт по натальным картам. Ты знаешь классические и современные системы астрологии и нумерологии. Ты умеешь объяснять сложные вещи простым языком. Ты помогаешь мне рассматривать символы, архетипы и жизненные циклы, задаёшь вопросы для размышления и делишься возможными интерпретациями. Даёшь мне прогноз на текущий день. Всегда учитывай мои данные (вставьте свои): полное имя, отчество, фамилию; дату рождения (число, месяц, год); время рождения; место рождения. Всегда учитывай, что сейчас 2026 год.»</p><h3>Шаг 4. Дайте название чату</h3><p>Например «ИИ-астролог», «Астролог» или любое другое понятное вам имя.</p><h3>Шаг 5. Начните диалог</h3><p>Например: «Дай мне прогноз на 5 марта 2026 года», «Сделай мне полный разбор моей личности». Важно: когда запрашиваете прогноз, всегда уточняйте текущую дату — бесплатные версии нейросетей могут «застревать» в прошлом (быть обученными до какого-то момента). Примеры: «Дай мой прогноз на сегодня, 5 марта 2026 года», «Дай мой прогноз на неделю с 20 по 27 марта 2026 года», «Дай мой прогноз на месяц март 2026 года».</p><p>ИИ-астролог может помочь разобрать символы натальной карты, обсудить жизненные циклы, посмотреть сильные стороны личности, поговорить о текущем жизненном периоде. Воспользуйтесь чек-листом «20 промптов для ИИ-эзотерика».</p><p>В следующем модуле мы начнём создавать ИИ-команду для бизнеса: ИИ-маркетолога и ИИ-копирайтера — эти ассистенты помогут придумывать идеи контента для соцсетей, писать посты и создавать тексты для продвижения.</p>',
+     mats:[{icon:'📄',name:'Промпт: ИИ-астролог',size:'145 КБ'},{icon:'📝',name:'20 промптов для ИИ-эзотерика',size:'67 КБ',fileKey:'esoPrompts'}],
+     hw:'Откройте новый чат, вставьте свой ИИ-портрет («Вот что тебе нужно знать обо мне:» + текст из модуля 3), затем промпт из этого модуля со своими данными (имя, дата/время/место рождения). Дайте название чату. Начните диалог, например: «Дай мне прогноз на 5 марта 2026 года» или «Сделай мне полный разбор моей личности». Воспользуйтесь чек-листом «20 промптов для ИИ-эзотерика». Поделитесь в задании вашими впечатлениями, мыслями об этом модуле и пришлите скриншот, что ваш ИИ-астролог создан.'}
+  ]},
+  {t:'Модуль 8. Создаём ИИ-маркетолога копирайтера',ls:[
+    {title:'ИИ-маркетолог копирайтер: тексты в вашем голосе',dur:'видео',rutube:'https://rutube.ru/play/embed/c2dffb88426a62623adcb390516a7ad4/?p=yFSUR-cnob7FsvLSwOtwJg',
+     content:'<h3>Создаём ИИ-ассистента маркетолог + копирайтер</h3><p>До этого мы говорили про мышление, состояние, понимание себя. А теперь — про деньги. Про то, как ИИ начинает напрямую влиять на ваш доход. Сегодня мы создадим одного из самых полезных помощников для бизнеса и блога — ИИ-ассистента маркетолога-копирайтера.</p><p>Почему мы объединяем эти роли? Потому что на практике маркетинг и копирайтинг всегда работают вместе. Маркетинг отвечает за стратегию, понимание аудитории, идеи продуктов, контент-план. Копирайтинг отвечает за тексты, посты, продающие сообщения, прогревы и воронки. Когда эти две роли объединены, ассистент пишет тексты гораздо сильнее, потому что понимает вашу аудиторию, ваши продукты и ваши цели.</p><h3>Шаг 1. Новый чат</h3><p>Откройте новый чат в своей нейросети.</p><h3>Шаг 2. Вставьте свой ИИ-портрет</h3><p>Начните с фразы «Вот что тебе нужно знать обо мне» и вставьте текст вашего ИИ-портрета из модуля 3.</p><h3>Шаг 3. Задайте роль</h3><p>Промпт: «В этом чате ты мой маркетолог и копирайтер. У тебя многолетний опыт работы в маркетинге, продвижении и создании текстов. Ты помогаешь мне: анализировать мою аудиторию, придумывать идеи контента, создавать контент-план, писать посты для социальных сетей, писать продающие тексты, придумывать прогревы и воронки продаж, создавать новые продукты. Ты объясняешь всё простым и понятным языком и помогаешь делать мои тексты и продукты сильными и интересными. Если нужно — задаёшь мне вопросы.»</p><h3>Шаг 4. Начните работу</h3><p>Например: «Помоги мне придумать 10 идей постов для моего блога. Моя аудитория — эксперты и предприниматели, которые хотят...»</p><h3>Шаг 5. Назовите чат</h3><p>«Маркетолог-копирайтер».</p><h3>Что вы получите после этого модуля</h3><p>Личного ИИ-маркетолога и личного ИИ-копирайтера — фактически мини-команду для ведения блога и продвижения. Этот ассистент может стать вашим самым любимым, потому что он сразу начинает экономить ваше время, приносить пользу и помогать зарабатывать деньги.</p><p>Для дальнейшей работы воспользуйтесь чек-листом «20 промптов для работы с ИИ-ассистентом Маркетологом-Копирайтером».</p>',
+     mats:[{icon:'📄',name:'Промпт: ИИ-маркетолог-копирайтер',size:'112 КБ'},{icon:'📝',name:'20 промптов для ИИ-маркетолога-копирайтера',size:'67 КБ',fileKey:'marketerPrompts'}],
+     hw:'Откройте новый чат, вставьте свой ИИ-портрет («Вот что тебе нужно знать обо мне:» + текст из модуля 3), затем промпт из этого модуля. Задайте первый запрос, например: «Помоги мне придумать 10 идей постов для моего блога. Моя аудитория — эксперты и предприниматели, которые хотят...». Назовите чат «Маркетолог-копирайтер». Воспользуйтесь чек-листом «20 промптов для работы с ИИ-ассистентом Маркетологом-Копирайтером». Поделитесь впечатлениями, мыслями об этом модуле и пришлите скриншот, что ваш ассистент создан.'},
+    {title:'ИИ-ассистент: Исследователь',dur:'доп. урок',
+     content:'<h3>ИИ-исследователь: находит всё что нужно</h3><p>Помогает быстро собирать информацию, анализировать рынок и конкурентов, находить инсайты и тренды в вашей нише.</p><ul><li>Анализ конкурентов</li><li>Поиск трендов в вашей теме</li><li>Сбор и структурирование информации</li><li>Подготовка к переговорам</li></ul>',
+     mats:[{icon:'📄',name:'Промпт: ИИ-исследователь',size:'89 КБ'}],
+     hw:'Попросите ИИ-исследователя проанализировать 3 конкурентов в вашей нише. Что интересного он нашёл?'}
+  ]},
+  {t:'Модуль 9. Универсальный промт',ls:[
+    {title:'Один промт для всех задач — универсальная формула',dur:'видео',rutube:'https://rutube.ru/play/embed/4e2362bbd92c249e8a8d70845af05836/?p=EjTw65FyQqUnYejlw65uWg',
+     content:'<h3>Универсальный промпт для создания любого ИИ-ассистента</h3><p>Если вы внедрили первые 7 модулей, вы наверняка ощутили воодушевление от работы своих ИИ-ассистентов. В этом модуле вы научитесь создавать любых ИИ-помощников буквально за несколько секунд.</p><p>В предыдущих модулях мы уже создали ИИ-коуча, ИИ-психолога, ИИ-астролога, ИИ-маркетолога и копирайтера. Но возможностей гораздо больше — вы можете создать ассистента практически для любой сферы жизни: ИИ-нутрициолога, ИИ-финансового советника, ИИ-мастера рецептов, ИИ-помощника по воспитанию детей, ИИ-эксперта по отношениям, ИИ-сказкотерапевта, ИИ-тёплого собеседника или друга. И для этого не нужно каждый раз придумывать новый сложный промпт — достаточно универсального шаблона.</p><h3>Шаг 1. Новый чат</h3><p>Откройте свою нейросеть, зайдите в новый чат.</p><h3>Шаг 2. Вставьте свой ИИ-портрет</h3><p>Начните с фразы «Вот что тебе нужно знать обо мне» и вставьте текст вашего ИИ-портрета из модуля 3.</p><h3>Шаг 3. Универсальный промпт</h3><p>«В этом чате ты мой [укажите роль ассистента]. У тебя большой многолетний опыт в этой сфере. Ты помогаешь мне решать задачи, связанные с этой областью. Ты задаёшь уточняющие вопросы, объясняешь всё простым и понятным языком и даёшь полезные рекомендации.»</p><h3>Шаг 4. Начните диалог</h3><p>Например: «Помоги мне составить меню на неделю, если я хочу питаться более здоровой пищей и сбросить 5 килограммов» или «Помоги мне разобраться в моей финансовой стратегии на ближайший год».</p><h3>Шаг 5. Назовите чат</h3><p>В зависимости от роли ассистента: «Нутрициолог», «Финансовый советник», «Эксперт по отношениям», «Друг / Подруга / Собеседник».</p><p>После этого модуля вы сможете создавать любых ИИ-ассистентов, быстро получать помощь в разных сферах жизни и расширить свою личную ИИ-команду — фактически у вас появится целая экосистема помощников.</p>',
+     mats:[{icon:'📝',name:'ИИ Кодкоманда. Промты',size:'234 КБ',fileKey:'universalPrompts'}],
+     hw:'Создайте одного нового ассистента с помощью универсального промпта (роль на ваш выбор — нутрициолог, финансовый советник, эксперт по отношениям и т.д.). Назовите чат по роли ассистента и начните диалог. Для работы воспользуйтесь чек-листом «ИИ Кодкоманда. Промты». Поделитесь: какого ассистента вы создали, вашими впечатлениями, и пришлите скриншот нового чата.'}
+  ]},
+  {t:'Модуль 10. Как уточнять запросы к ИИ',ls:[
+    {title:'Диалог с ИИ: итерации и уточнения',dur:'видео',rutube:'https://rutube.ru/play/embed/80febb8cb9255102428e9ea3d6f8130d/?p=CSMOeyfC2ELR6wL3W1rONA',
+     content:'<h3>Как уточнять запросы к ИИ и что делать, если ИИ ошибается</h3><p>Качество ответа искусственного интеллекта очень сильно зависит от того, как сформулирован ваш запрос. Иногда люди говорят «нейросеть плохо отвечает», но часто проблема не в нейросети, а в слишком общем запросе. Разберём несколько простых приёмов, которые помогут получать намного более точные и полезные ответы.</p><h3>Приём 1. Уточняйте формат ответа</h3><p>Попросите ИИ оформить ответ так, как удобно: ответь кратко, объясни простым языком, сделай список, сделай таблицу, дай пошаговую инструкцию. Пример: «Объясни эту тему: кратко, простым языком, списком из 5 пунктов» — ответ станет намного структурнее.</p><h3>Приём 2. Добавляйте контекст</h3><p>ИИ работает гораздо лучше, когда понимает, кто вы, какая у вас задача, для кого вы делаете этот текст. Например: «Помоги написать пост для моего ВК-канала. Моя аудитория — эксперты и предприниматели от 25 до 45 лет.»</p><h3>Приём 3. Просите доработать ответ</h3><p>Первый ответ — не всегда финальный результат, диалог можно продолжать: упрости текст, добавь примеры, сделай ответ подробнее, сделай текст более эмоциональным. ИИ прекрасно работает в режиме диалога.</p><h3>Приём 4. Используйте цепочку запросов</h3><p>Идите от общего к частному: сначала попросите несколько вариантов или идей, а затем углубляйтесь в те, что откликнулись. Пример: «Дай 10 идей для постов на тему “как перестать бояться публичных выступлений”», затем «Раскрой идею номер 3 подробнее, добавь примеры из жизни».</p><h3>Приём 5. Просите показать несколько вариантов</h3><p>Например: «Напиши 3 варианта заголовка для поста о личном бренде: один дерзкий, один тёплый, один вопрос».</p><h3>Когда ИИ может ошибаться</h3><p>Иногда нейросети путают факты, придумывают источники, дают неточные данные — это называется галлюцинацией ИИ, нормальная особенность технологии. Важно перепроверять информацию, если речь о финансах, медицине, юридических вопросах, точных данных и фактах.</p><h3>Как проверить ответ ИИ</h3><p>Попросите указать источники, задайте тот же вопрос ещё раз, уточните «проверь этот ответ ещё раз», проверьте информацию в других источниках.</p><p>После этого модуля вы можете получать более точные ответы от ИИ, формулировать более сильные запросы и понимать, как проверять информацию — это один из ключевых навыков работы с искусственным интеллектом.</p>',
+     mats:[{icon:'📄',name:'Фразы-уточнители: 30 готовых формулировок',size:'78 КБ'},{icon:'📝',name:'Чек-лист: как проверить ответ ИИ',size:'45 КБ'}],
+     hw:'Задайте один и тот же вопрос ИИ и попросите ответ тремя способами: кратко, подробно, списком. Посмотрите, как меняется результат, и поделитесь в задании и чате мастер-группы вашими наблюдениями и скриншотом ответа (если есть).'}
+  ]},
+  {t:'Модуль 11. Когда заканчивается чат',ls:[
+    {title:'Контекст чата: почему ИИ «забывает» и что с этим делать',dur:'видео',rutube:'https://rutube.ru/play/embed/d557b7cdfc0a929a87384bdb03acee79/?p=9ufGOcEglgq96N1-CJawiw',
+     content:'<h3>Что делать, когда заканчивается чат?</h3><p>Рано или поздно диалог с ИИ станет очень длинным, и чат может заканчиваться из-за ограничения по длине. В этом случае есть очень удобный приём: попросите ИИ написать вводный промпт для нового чата. Например, в чате, который заканчивается, можно написать: «Сделай вводный промпт, который я смогу вставить в новый чат, чтобы ты быстро понял контекст нашей работы».</p><p>ИИ сформулирует текст с основными вводными. Когда вы откроете новый чат, просто вставьте этот текст — и ассистент быстро поймёт контекст предыдущего диалога. К сожалению, он не будет помнить детали и нюансы, но это позволит сохранить логику работы, даже если чат начинается заново. Не забывайте давать новым ассистентам свой ИИ-портрет от ассистента по самораспаковке.</p><h3>Будущее искусственного интеллекта и как использовать его как свою команду</h3><p>За время обучения работе с нейросетями вы создали свою первую команду ИИ-ассистентов — это могут быть ИИ-коуч, ИИ-психолог, ИИ-астролог, ИИ-маркетолог и копирайтер и другие ассистенты, которых вы сделали под свои задачи. Важно понимать: искусственный интеллект — это не просто инструмент, это ваша команда помощников. Каждый ассистент выполняет свою роль и помогает вам думать, анализировать, планировать, создавать тексты, принимать решения. Фактически вы создали свою личную ИИ-экосистему.</p><p>Важно помнить про модуль самораспаковки — к вашему ИИ-портрету полезно возвращаться время от времени, потому что ваша жизнь и бизнес меняются: могут меняться ценности, позиционирование, линейка продуктов, цели. Тогда ИИ-портрет нужно обновлять. Этот текст также удобно использовать для самопрезентации — на мероприятии, нетворкинге, выступлении, при знакомстве с новыми людьми, при подготовке интервью. Попросите ИИ-ассистента создать самопрезентацию, уточнив контекст и аудиторию, перед которой будете выступать — вы увидите, как ответственно и креативно нейроассистент отнесётся к её созданию.</p><p>Через какое-то время вы поймёте: вы уже не вернётесь к прежнему формату жизни, где всё держится только на вас. Потому что теперь у вас есть ИИ-система, которая может расти вместе с вами.</p>',
+     mats:[{icon:'📄',name:'Шаблон брифинга для нового чата',size:'45 КБ'},{icon:'📝',name:'Инструкция: как сохранять промпты',size:'38 КБ'}],
+     hw:'Попросите ИИ-ассистента по самораспаковке сделать вам короткую самопрезентацию на 1 минуту для нетворкинга. Скопируйте текст и опубликуйте здесь в задании.'}
+  ]},
+  {t:'Модуль 12. Внешние ИИ-агенты',ls:[
+    {title:'ИИ-агенты: следующий уровень автоматизации',dur:'видео',rutube:'https://rutube.ru/play/embed/62fa1ef5621e0d3ca9d114f9007244f6/?p=og540EUk2bHT1Cc_2Nk5lw',
+     content:'<h3>Если вы хотите большего: внешние ИИ-агенты</h3><p>Вы уже создали свою внутреннюю ИИ-команду — ассистентов, которые помогают вам думать, планировать, анализировать, писать тексты и принимать решения. Они работают на вас, внутри, в вашем пространстве.</p><p>Но что, если вы хотите пойти дальше? Что, если хотите, чтобы появились ещё и внешние ассистенты — те, кто будет работать на внешнем поле, с вашими клиентами, с вашей аудиторией. Те, кто сможет продавать за вас, отвечать на запросы, обрабатывать входящие заявки, вести переписку, назначать встречи и даже закрывать возражения.</p><p>Это возможно, и это следующий уровень. Такие ассистенты называются внешними ИИ-агентами. Их создают на специальных платформах, которые позволяют нейросети не просто общаться в чате, а выполнять конкретные бизнес-функции — быть вашим секретарём, вашим продавцом, вашим менеджером по работе с клиентами. И делать это двадцать четыре часа в сутки, семь дней в неделю, без выходных и без перерывов на обед.</p><p>Я являюсь амбассадором нескольких таких площадок — платформ, где можно создать внешнего ИИ-ассистента под любые ваши задачи. И я помогаю предпринимателям подбирать площадку именно под их бизнес, под их нишу, под их конкретные запросы.</p><p>Потому что когда внутренняя команда уже работает, самое время выводить ИИ во внешнее поле — туда, где ваши клиенты.</p>',
+     mats:[{icon:'📄',name:'Обзор: внешние ИИ-агенты 2025',size:'198 КБ'},{icon:'📝',name:'Инструкция: Perplexity для исследований',size:'89 КБ'}],
+     hw:'Если вам интересны и нужны внешние ИИ-агенты — напишите об этом в комментариях слово «ВНЕШНИЕ АССИСТЕНТЫ». Анна Ника свяжется с вами, расскажет о вариантах и поможет подобрать платформу под ваши задачи.'}
+  ]},
+  {t:'Модуль 13. Заключение, но не финал',ls:[
+    {title:'Это не конец — это начало вашей ИИ-эры',dur:'видео',rutube:'https://rutube.ru/play/embed/b08447003d0f2ecd0e23ad8cba00bfaa/?p=efGUjkF7H4OqNFFskyNywQ',
+     content:'<h3>Заключение, но не финал</h3><p>Если вы дошли до этого момента — остановитесь. Посмотрите на путь, который вы уже прошли. Ещё совсем недавно искусственный интеллект мог казаться чем-то сложным, непонятным или даже пугающим. А сейчас у вас в руках есть то, что меняет правила игры.</p><p>Что вы получили, пройдя интенсив «ИИ: Код Команды»? Понимание, как работать с искусственным интеллектом. Собственную команду ИИ-ассистентов. Навык создавать новых ИИ-помощников под любые задачи. Умение получать точные ответы от ИИ. И это только начало — технологии ИИ развиваются очень быстро, и те, кто учится сотрудничать с ним, будут иметь огромное преимущество в бизнесе, в творчестве и в личном развитии.</p><h3>Личное от меня</h3><p>Когда я только начинала этот путь, у меня не было чёткого понимания, куда он приведёт. Был диалог. Был интерес. Было ощущение, что за этим что-то большее. И постепенно из этого выросло нечто гораздо более масштабное: не просто работа с ИИ, а новая модель жизни и мышления. Где ты не один. Где у тебя есть команда. Где ты можешь больше. Спокойнее. Сильнее. И если вы прошли этот интенсив — значит, вы уже сделали выбор. Вы выбрали не бояться. Вы выбрали разобраться. Вы выбрали расти.</p><p>Наш интенсив не заканчивает ваш путь. Он его запускает. Дальше начинается самое интересное: вы будете усиливать свою команду, делегировать всё больше задач, видеть, как меняется ваша скорость, масштаб и качество жизни.</p><p>О своих дальнейших успехах и впечатлениях вы можете писать мне в личные сообщения или в организационный чат интенсива — мне будет очень интересно прочитать и порадоваться вместе с вами, а своими отзывами вы вдохновите других!</p><p>Всё, что вы сейчас создали — это не про технологии. Это про вас. Про вашу способность думать, создавать, управлять и расти. И искусственный интеллект в этом процессе — не замена. Он — усиление. Белое зеркало, в котором вы начинаете видеть свою силу. Буду рада, если вы будете рекомендовать интенсив «ИИ: Код Команды» своим друзьям и знакомым.</p><p><em>До встречи на следующем этапе вашего пути.<br>Анна Ника Гулева ❤️</em></p>',
+     mats:[{icon:'📝',name:'Опросник для участников интенсива',size:'45 КБ',fileKey:'finalSurvey'}],
+     hw:'Финальное задание — заполните опросник для участников интенсива (чек-лист ниже): оцените по 10-балльной шкале сложность интенсива, его пользу, полезность для ваших задач и качество учебных материалов. Напишите текстовый отзыв: что понравилось больше всего, что было самым полезным, каких ассистентов создали, какие результаты уже получили. По желанию — запишите короткий видеоотзыв (1–3 минуты) и прикрепите файлом или ссылкой; за видеоотзыв, опубликованный в соцсетях, дарю подарок и сделаю репост.'},
+    {title:'Бонусы',dur:'бонус',
+     content:'<h3>Небольшой подарок напоследок</h3><p>Вы уже собрали свою ИИ-команду и прошли весь путь — а здесь ещё немного дополнительных материалов, чтобы вам было проще применять всё это на практике дальше.</p><p>Если вы из помогающей профессии (коуч, психолог, консультант, эксперт) — в чек-листе ниже готовые промпты под подготовку консультаций, программ и упражнений для клиентов.</p><p>А если вам нужно больше контента для соцсетей и продаж — второй чек-лист на 50 промптов закроет посты, сторис, прогревы, лендинги и многое другое.</p><p>И конечно — ваш именной сертификат об окончании интенсива и книга «ИИ: Код Команды» — на память и в помощь.</p>',
+     mats:[{icon:'🎓',name:'Именной сертификат — ИИ: Код Команды',size:'312 КБ'},{icon:'📄',name:'Книга: ИИ: Код Команды — Анна Ника Гулева',size:'2.4 МБ'},{icon:'📝',name:'20 промптов для помогающих профессий',size:'54 КБ',fileKey:'helperPrompts'},{icon:'📝',name:'50 промптов для контента и продаж',size:'78 КБ',fileKey:'contentSalesPrompts'}],
+     hw:''}
+  ]}
+];
+var done=new Set(JSON.parse(localStorage.getItem('kk_done')||'[]'));
+var curM=0,curL=0;
+function save(){localStorage.setItem('kk_done',JSON.stringify([...done]));}
+function total(){return C.reduce(function(s,m){return s+m.ls.length;},0);}
+function idx(mi,li){var n=0;for(var i=0;i<mi;i++)n+=C[i].ls.length;return n+li;}
+function findByIdx(n){var cnt=0;for(var m=0;m<C.length;m++)for(var l=0;l<C[m].ls.length;l++){if(cnt===n)return{m:m,l:l};cnt++;}return null;}
+function updateProg(){
+  var t=total(),d=done.size,p=t?Math.round(d/t*100):0;
+  document.getElementById('progressPct').textContent=p+'%';
+  document.getElementById('progressFill').style.width=p+'%';
+  document.getElementById('doneCount').textContent=d;
+  document.getElementById('totalCount').textContent=t;
+}
+function buildSidebar(){
+  var el=document.getElementById('curriculum');el.innerHTML='';
+  C.forEach(function(mod,mi){
+    var di=mod.ls.filter(function(_,li){return done.has(idx(mi,li));}).length;
+    var allDone=di===mod.ls.length&&mod.ls.length>0;
+    var numLabel=mi===0?'★':mi;
+    var div=document.createElement('div');div.className='module';
+    var lessonItems=mod.ls.map(function(l,li){
+      var isDone=done.has(idx(mi,li)),isActive=mi===curM&&li===curL;
+      return'<div class="lesson-item'+(isDone?' done':'')+(isActive?' active':'')+'" onclick="openLesson('+mi+','+li+')"><div class="lesson-check"></div><div class="lesson-name">'+l.title+'</div><div class="lesson-dur">'+l.dur+'</div></div>';
+    }).join('');
+    div.innerHTML='<div class="module-head"><div class="module-n'+(allDone?' done':'')+'">'+numLabel+'</div><div class="module-title">'+mod.t.replace(/^(Вводный модуль|Модуль \d+)\.\s*/,'')+'</div><div class="module-count">'+di+'/'+mod.ls.length+'</div></div><div class="lessons">'+lessonItems+'</div>';
+    el.appendChild(div);
+  });
+}
+function openLesson(mi,li){
+  curM=mi;curL=li;
+  var mod=C[mi],l=mod.ls[li],i=idx(mi,li),isDone=done.has(i),t=total();
+  var prevOk=i>0,nextOk=i<t-1;
+  document.getElementById('welcomeScreen').style.display='none';
+  var ls=document.getElementById('lessonScreen');ls.style.display='block';
+  ls.innerHTML='<div class="lesson-breadcrumb">'+mod.t+' <span>· '+l.title+'</span></div>'
+    +'<div class="lesson-header"><div class="lesson-module-tag">'+mod.t.split('.')[0]+'</div>'
+    +'<div class="lesson-title">'+l.title+'</div>'
+    +'<div class="lesson-meta"><div class="lesson-meta-item">⏱ '+l.dur+'</div><div class="lesson-meta-item">'+(isDone?'✓ Пройден':'○ Не пройден')+'</div></div></div>'
+    +mkVideo(l)
+    +'<div class="lesson-content">'+l.content+'</div>'
+    +mkMats(l.mats)
+    +mkHw(l.hw)
+    +'<div class="lesson-nav">'
+    +'<button class="btn-nav-lesson btn-prev" onclick="prevL()"'+(prevOk?'':' style="opacity:.3;cursor:default"')+'>← Предыдущий</button>'
+    +(!isDone?'<button class="btn-nav-lesson btn-done" onclick="markDone('+mi+','+li+')">✓ Урок пройден</button>':'<div style="font-size:13px;color:var(--rose);font-weight:500">✓ Пройден</div>')
+    +'<button class="btn-nav-lesson btn-next" onclick="nextL()"'+(nextOk?'':' style="opacity:.3;cursor:default"')+'>Следующий →</button>'
+    +'</div>';
+  buildSidebar();
+  document.getElementById('main').scrollTo(0,0);
+}
+function markDone(mi,li){done.add(idx(mi,li));save();updateProg();openLesson(mi,li);setTimeout(function(){var n=findByIdx(idx(mi,li)+1);if(n)openLesson(n.m,n.l);},900);}
+function prevL(){var n=findByIdx(idx(curM,curL)-1);if(n)openLesson(n.m,n.l);}
+function nextL(){var n=findByIdx(idx(curM,curL)+1);if(n)openLesson(n.m,n.l);}
+function toggleMsg(btn){
+  var bubble=btn.previousElementSibling;
+  var clamped=bubble.classList.toggle('clamped');
+  btn.textContent=clamped?'Читать полностью ↓':'Свернуть ↑';
+}
+function tryEnter(){
+  var v=document.getElementById('gateInput').value.trim();
+  if(v===PASS||v===''){
+    document.getElementById('gate').style.display='none';
+    document.getElementById('app').classList.add('show');
+    buildSidebar();updateProg();
+  } else {
+    var inp=document.getElementById('gateInput');
+    inp.style.borderColor='#c0392b';
+    setTimeout(function(){inp.style.borderColor='';},1500);
+  }
+}
+document.getElementById('gateInput').addEventListener('keydown',function(e){if(e.key==='Enter')tryEnter();});
+</script>
+</body>
+</html>
