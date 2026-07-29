@@ -99,6 +99,14 @@ html,body{height:100%;font-family:'Inter',system-ui,sans-serif;background:var(--
 .material-name{font-size:13px;color:var(--charcoal);font-weight:400;flex:1}
 .material-size{font-size:11px;color:var(--muted);font-weight:300}
 .material-dl{font-size:11px;color:var(--rose);font-weight:500}
+.book-viewer{margin-bottom:36px}
+.book-frame{background:var(--charcoal);border-radius:4px;display:flex;align-items:center;justify-content:center;padding:20px;min-height:400px}
+.book-page-img{max-width:100%;max-height:74vh;box-shadow:0 8px 30px rgba(0,0,0,.35);user-select:none;-webkit-user-drag:none;border-radius:2px}
+.book-controls{display:flex;align-items:center;justify-content:center;gap:20px;margin-top:16px}
+.book-btn{padding:10px 20px;background:var(--charcoal);color:#fff;border:none;font-size:13px;font-weight:500;cursor:pointer;border-radius:2px;transition:background .2s,opacity .2s}
+.book-btn:hover{background:var(--rose-d)}
+.book-counter{font-size:13px;color:var(--muted);font-weight:400;min-width:80px;text-align:center}
+.book-hint{font-size:11px;color:var(--muted);text-align:center;margin-top:12px;font-weight:300}
 .homework{background:#fff;border:1px solid var(--border);padding:28px 32px;margin-bottom:36px;border-radius:2px}
 .homework-tag{font-size:11px;font-weight:500;letter-spacing:1.5px;text-transform:uppercase;color:var(--rose);margin-bottom:10px}
 .homework-title{font-family:Georgia,'Times New Roman',serif;font-size:20px;font-weight:600;color:var(--charcoal);margin-bottom:10px}
@@ -342,6 +350,35 @@ html,body{height:100%;font-family:'Inter',system-ui,sans-serif;background:var(--
 </div>
 <script>
 const PASS='kod2024';
+var curBookCfg=null,bookPageN=1;
+function bookPad(n){return(n<10?'0':'')+n;}
+function mkBook(cfg){
+  return '<div class="book-viewer"><div class="book-frame" id="bookFrame">'
+    +'<img id="bookImg" class="book-page-img" draggable="false" oncontextmenu="return false" src="'+cfg.path+'pg-'+bookPad(bookPageN)+'.jpg" alt="Страница книги">'
+    +'</div><div class="book-controls">'
+    +'<button class="book-btn" id="bookPrevBtn" onclick="bookNav(-1)">← Назад</button>'
+    +'<div class="book-counter"><span id="bookCur">'+bookPageN+'</span> / '+cfg.count+'</div>'
+    +'<button class="book-btn" id="bookNextBtn" onclick="bookNav(1)">Вперёд →</button>'
+    +'</div><div class="book-hint">Книга доступна только для чтения на платформе — скачивание отключено.</div></div>';
+}
+function bookRender(){
+  document.getElementById('bookImg').src=curBookCfg.path+'pg-'+bookPad(bookPageN)+'.jpg';
+  document.getElementById('bookCur').textContent=bookPageN;
+  document.getElementById('bookPrevBtn').style.opacity=bookPageN>1?1:.3;
+  document.getElementById('bookNextBtn').style.opacity=bookPageN<curBookCfg.count?1:.3;
+}
+function bookNav(d){
+  if(!curBookCfg)return;
+  var n=bookPageN+d;
+  if(n<1||n>curBookCfg.count)return;
+  bookPageN=n;bookRender();
+  document.getElementById('bookFrame').scrollTo(0,0);
+}
+document.addEventListener('keydown',function(e){
+  if(!curBookCfg)return;
+  if(e.key==='ArrowLeft')bookNav(-1);
+  if(e.key==='ArrowRight')bookNav(1);
+});
 function mkVideo(l){
   if(l.rutube){
     return '<div class="video-wrap"><iframe src="'+l.rutube+'" allow="clipboard-write; autoplay" webkitAllowFullScreen mozallowfullscreen allowfullscreen></iframe></div>';
@@ -1195,9 +1232,13 @@ var C=[
      mats:[{icon:'📝',name:'Опросник для участников интенсива',size:'45 КБ',fileKey:'finalSurvey'}],
      hw:'Финальное задание — заполните опросник для участников интенсива (чек-лист ниже): оцените по 10-балльной шкале сложность интенсива, его пользу, полезность для ваших задач и качество учебных материалов. Напишите текстовый отзыв: что понравилось больше всего, что было самым полезным, каких ассистентов создали, какие результаты уже получили. По желанию — запишите короткий видеоотзыв (1–3 минуты) и прикрепите файлом или ссылкой; за видеоотзыв, опубликованный в соцсетях, дарю подарок и сделаю репост.'},
     {title:'Бонусы',dur:'бонус',
-     content:'<h3>Небольшой подарок напоследок</h3><p>Вы уже собрали свою ИИ-команду и прошли весь путь — а здесь ещё немного дополнительных материалов, чтобы вам было проще применять всё это на практике дальше.</p><p>Если вы из помогающей профессии (коуч, психолог, консультант, эксперт) — в чек-листе ниже готовые промпты под подготовку консультаций, программ и упражнений для клиентов.</p><p>А если вам нужно больше контента для соцсетей и продаж — второй чек-лист на 50 промптов закроет посты, сторис, прогревы, лендинги и многое другое.</p><p>И конечно — ваш именной сертификат об окончании интенсива и книга «ИИ: Код Команды» — на память и в помощь.</p>',
-     mats:[{icon:'🎓',name:'Именной сертификат — ИИ: Код Команды',size:'312 КБ'},{icon:'📄',name:'Книга: ИИ: Код Команды — Анна Ника Гулева',size:'2.4 МБ'},{icon:'📝',name:'20 промптов для помогающих профессий',size:'54 КБ',pdf:'files/20-promtov-pomogatorov.pdf',fileKey:'helperPrompts'},{icon:'📝',name:'50 промптов для контента и продаж',size:'78 КБ',pdf:'files/50-promtov-kontent-prodazhi.pdf',fileKey:'contentSalesPrompts'}],
-     hw:''}
+     content:'<h3>Небольшой подарок напоследок</h3><p>Вы уже собрали свою ИИ-команду и прошли весь путь — а здесь ещё немного дополнительных материалов, чтобы вам было проще применять всё это на практике дальше.</p><p>Если вы из помогающей профессии (коуч, психолог, консультант, эксперт) — в чек-листе ниже готовые промпты под подготовку консультаций, программ и упражнений для клиентов.</p><p>А если вам нужно больше контента для соцсетей и продаж — второй чек-лист на 50 промптов закроет посты, сторис, прогревы, лендинги и многое другое.</p><p>И конечно — ваш именной сертификат об окончании интенсива. А книгу «ИИ: Код Команды» можно почитать прямо здесь, на платформе, — в следующем уроке.</p>',
+     mats:[{icon:'🎓',name:'Именной сертификат — ИИ: Код Команды',size:'312 КБ'},{icon:'📝',name:'20 промптов для помогающих профессий',size:'54 КБ',pdf:'files/20-promtov-pomogatorov.pdf',fileKey:'helperPrompts'},{icon:'📝',name:'50 промптов для контента и продаж',size:'78 КБ',pdf:'files/50-promtov-kontent-prodazhi.pdf',fileKey:'contentSalesPrompts'}],
+     hw:''},
+    {title:'Книга: ИИ: Код Команды',dur:'книга',noVideo:true,
+     book:{path:'files/book/',count:56},
+     content:'<h3>Книга «ИИ: Код Команды»</h3><p>Ваша книга — целиком, в электронном виде. Листайте страницы прямо здесь, в удобном темпе. Книга доступна только для чтения на платформе, без скачивания — чтобы она оставалась именно вашей и не гуляла бесконтрольно по чужим рукам.</p>',
+     mats:[],hw:''}
   ]}
 ];
 var done=new Set(JSON.parse(localStorage.getItem('kk_done')||'[]'));
@@ -1231,6 +1272,7 @@ function buildSidebar(){
 function openLesson(mi,li){
   curM=mi;curL=li;
   var mod=C[mi],l=mod.ls[li],i=idx(mi,li),isDone=done.has(i),t=total();
+  curBookCfg=l.book||null;bookPageN=1;
   var prevOk=i>0,nextOk=i<t-1;
   document.getElementById('welcomeScreen').style.display='none';
   var ls=document.getElementById('lessonScreen');ls.style.display='block';
@@ -1240,6 +1282,7 @@ function openLesson(mi,li){
     +'<div class="lesson-meta"><div class="lesson-meta-item">⏱ '+l.dur+'</div><div class="lesson-meta-item">'+(isDone?'✓ Пройден':'○ Не пройден')+'</div></div></div>'
     +(l.noVideo?'':mkVideo(l))
     +'<div class="lesson-content">'+l.content+'</div>'
+    +(l.book?mkBook(l.book):'')
     +mkMats(l.mats)
     +mkHw(l.hw)
     +'<div class="lesson-nav">'
