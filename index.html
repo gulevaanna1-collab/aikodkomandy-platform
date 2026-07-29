@@ -1303,7 +1303,7 @@ function toggleMsg(btn){
 }
 function tryEnter(){
   var v=document.getElementById('gateInput').value.trim();
-  if(v===PASS||v===''){
+  if(v===PASS){
     document.getElementById('gate').style.display='none';
     document.getElementById('app').classList.add('show');
     buildSidebar();updateProg();
