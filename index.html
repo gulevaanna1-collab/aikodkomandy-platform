@@ -36,7 +36,7 @@ html,body{height:100%;font-family:'Inter',system-ui,sans-serif;background:var(--
 .gate-error{font-size:12px;color:#e8899a;text-align:center}
 .gate-success{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);padding:40px;width:340px;text-align:center;color:#fff;font-size:14px;line-height:1.6;font-weight:300}
 .gate-btn:disabled{opacity:.5;cursor:default}
-#app{display:none;height:100vh;flex-direction:column}
+#app{display:none;height:100vh;height:100dvh;flex-direction:column}
 #app.show{display:flex}
 .topbar{height:56px;background:var(--charcoal);display:flex;align-items:center;justify-content:space-between;padding:0 24px;flex-shrink:0;border-bottom:1px solid rgba(255,255,255,.08)}
 .topbar-logo{font-family:Georgia,'Times New Roman',serif;font-size:18px;font-weight:700;color:#fff;letter-spacing:.3px}
@@ -79,7 +79,6 @@ html,body{height:100%;font-family:'Inter',system-ui,sans-serif;background:var(--
 .sidebar-backdrop.show{display:block}
 @media (max-width:860px){
   .sidebar-toggle{display:block}
-  .body{overflow:visible}
   .sidebar{position:fixed;top:56px;left:0;bottom:0;z-index:500;transform:translateX(-100%);transition:transform .25s ease;box-shadow:4px 0 24px rgba(0,0,0,.15)}
   .sidebar.open{transform:translateX(0)}
   .main{width:100%}
@@ -87,7 +86,13 @@ html,body{height:100%;font-family:'Inter',system-ui,sans-serif;background:var(--
   .topbar{padding:0 14px}
   .topbar-progress-label{display:none}
   .progress-bar{width:60px}
-  .tp-link{display:none}
+  .tp-link{display:inline-block}
+  .tp-link-full{display:none}
+  .tp-link-short{display:inline !important}
+  .tp-header{padding:14px 16px;flex-wrap:wrap;gap:10px}
+  .tp-header-title{font-size:15px}
+  .tp-close{padding:8px 12px;font-size:12px;white-space:nowrap}
+  .tp-thread-head{flex-direction:column;gap:4px}
   .lesson-title{font-size:22px !important}
   .welcome{padding:30px 12px}
   .welcome-cards{grid-template-columns:1fr}
@@ -178,6 +183,7 @@ html,body{height:100%;font-family:'Inter',system-ui,sans-serif;background:var(--
 .tp-empty{color:var(--muted);font-size:13px;padding:20px;text-align:center}
 .tp-link{font-size:11px;color:rgba(255,255,255,.4);cursor:pointer;text-decoration:none}
 .tp-link:hover{color:rgba(255,255,255,.7)}
+.tp-link-short{display:none;font-size:18px}
 .lesson-nav{display:flex;justify-content:space-between;align-items:center;padding-top:24px;border-top:1px solid var(--border)}
 .btn-nav-lesson{display:inline-flex;align-items:center;gap:8px;padding:12px 22px;border-radius:2px;font-size:13px;font-weight:500;cursor:pointer;transition:all .2s;border:none;letter-spacing:.3px}
 .btn-prev{background:#fff;color:var(--charcoal);border:1px solid var(--border)}
@@ -258,7 +264,7 @@ html,body{height:100%;font-family:'Inter',system-ui,sans-serif;background:var(--
         <div class="topbar-progress-label">Прогресс: <span id="progressPct">0%</span></div>
         <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
       </div>
-      <a class="tp-link" onclick="openTeacherPanel()">Кабинет преподавателя</a>
+      <a class="tp-link" onclick="openTeacherPanel()"><span class="tp-link-full">Кабинет преподавателя</span><span class="tp-link-short">🎓</span></a>
       <div class="topbar-user" title="Ваш профиль">А</div>
     </div>
   </div>
@@ -432,7 +438,7 @@ html,body{height:100%;font-family:'Inter',system-ui,sans-serif;background:var(--
 <div id="teacherPanel">
   <div class="tp-header">
     <div class="tp-header-title">Кабинет преподавателя</div>
-    <button class="tp-close" onclick="closeTeacherPanel()">Закрыть ✕</button>
+    <button class="tp-close" onclick="closeTeacherPanel()">← Вернуться на платформу</button>
   </div>
   <div id="tpGate" class="tp-gate">
     <div class="gate-label" style="margin-bottom:10px">Пароль преподавателя</div>
