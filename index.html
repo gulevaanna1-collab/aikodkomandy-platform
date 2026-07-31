@@ -31,6 +31,11 @@ html,body{height:100%;font-family:'Inter',system-ui,sans-serif;background:var(--
 .gate-btn:hover{background:var(--rose)}
 .gate-hint{font-size:11px;color:rgba(255,255,255,.25);text-align:center;font-weight:300}
 .gate-demo{font-size:11px;color:rgba(168,80,104,.5);text-align:center}
+.gate-switch{font-size:12px;color:var(--rose-l);text-align:center;cursor:pointer;margin-top:2px}
+.gate-switch:hover{text-decoration:underline}
+.gate-error{font-size:12px;color:#e8899a;text-align:center}
+.gate-success{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);padding:40px;width:340px;text-align:center;color:#fff;font-size:14px;line-height:1.6;font-weight:300}
+.gate-btn:disabled{opacity:.5;cursor:default}
 #app{display:none;height:100vh;flex-direction:column}
 #app.show{display:flex}
 .topbar{height:56px;background:var(--charcoal);display:flex;align-items:center;justify-content:space-between;padding:0 24px;flex-shrink:0;border-bottom:1px solid rgba(255,255,255,.08)}
@@ -115,6 +120,43 @@ html,body{height:100%;font-family:'Inter',system-ui,sans-serif;background:var(--
 .homework-input:focus{border-color:var(--rose)}
 .homework-btn{margin-top:12px;padding:12px 24px;background:var(--charcoal);color:#fff;border:none;font-size:13px;font-weight:500;cursor:pointer;border-radius:2px;transition:background .2s;letter-spacing:.3px}
 .homework-btn:hover{background:var(--rose-d)}
+.comment-thread{display:flex;flex-direction:column;gap:10px;margin-bottom:14px}
+.comment-thread:empty{margin-bottom:0}
+.comment-item{padding:12px 16px;border-radius:4px 14px 14px 14px;font-size:13px;line-height:1.6;max-width:85%;white-space:pre-wrap;word-break:break-word}
+.comment-item.student{background:rgba(168,80,104,.06);border:1px solid var(--border);align-self:flex-end;border-radius:14px 4px 14px 14px}
+.comment-item.staff{background:var(--charcoal);color:#fff;align-self:flex-start}
+.comment-item-author{font-size:10.5px;font-weight:600;margin-bottom:4px;opacity:.65;text-transform:uppercase;letter-spacing:.5px}
+.comment-status{font-size:12px;color:var(--rose);margin-top:8px;min-height:14px}
+#teacherPanel{position:fixed;inset:0;background:var(--cream);z-index:2000;display:none;overflow-y:auto}
+#teacherPanel.show{display:block}
+.tp-header{background:var(--charcoal);color:#fff;padding:20px 32px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:1}
+.tp-header-title{font-family:Georgia,'Times New Roman',serif;font-size:20px}
+.tp-close{background:none;border:1px solid rgba(255,255,255,.3);color:#fff;padding:8px 16px;border-radius:2px;cursor:pointer;font-size:13px}
+.tp-body{max-width:900px;margin:0 auto;padding:32px}
+.tp-section{margin-bottom:40px}
+.tp-section-title{font-family:Georgia,'Times New Roman',serif;font-size:18px;color:var(--charcoal);margin-bottom:16px;font-weight:600}
+.tp-gate{max-width:340px;margin:100px auto;text-align:center}
+.tp-gate input{width:100%;padding:12px 16px;border:1px solid var(--border);border-radius:2px;font-size:14px;margin-bottom:12px;box-sizing:border-box}
+.tp-gate button{width:100%;padding:12px;background:var(--rose-d);color:#fff;border:none;border-radius:2px;cursor:pointer;font-weight:500}
+.tp-gate-error{font-size:12px;color:#c0392b;margin-top:10px}
+.tp-thread{background:#fff;border:1px solid var(--border);border-radius:4px;padding:16px 20px;margin-bottom:12px}
+.tp-thread-head{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:8px}
+.tp-thread-name{font-weight:600;color:var(--charcoal)}
+.tp-thread-body{font-size:14px;line-height:1.6;margin-bottom:12px;white-space:pre-wrap}
+.tp-reply-box{display:none;flex-direction:column;gap:8px;margin-top:10px}
+.tp-reply-box.open{display:flex}
+.tp-reply-box textarea{padding:10px 14px;border:1px solid var(--border);border-radius:2px;font-size:13px;min-height:70px;font-family:inherit;resize:vertical}
+.tp-reply-actions{display:flex;gap:8px;align-items:center}
+.tp-reply-actions select{padding:8px;border:1px solid var(--border);border-radius:2px;font-size:13px}
+.tp-reply-actions button{padding:8px 18px;background:var(--charcoal);color:#fff;border:none;border-radius:2px;cursor:pointer;font-size:13px}
+.tp-thread-open-btn{font-size:12px;color:var(--rose-d);cursor:pointer;font-weight:500;background:none;border:none;padding:0}
+.tp-students table{width:100%;border-collapse:collapse;background:#fff}
+.tp-students th{text-align:left;font-size:11px;text-transform:uppercase;color:var(--muted);padding:10px 14px;border-bottom:2px solid var(--border)}
+.tp-students td{padding:12px 14px;border-bottom:1px solid var(--border);font-size:13px}
+.tp-del-btn{color:#c0392b;cursor:pointer;font-size:12px;border:1px solid #c0392b;padding:5px 10px;border-radius:2px;background:none}
+.tp-empty{color:var(--muted);font-size:13px;padding:20px;text-align:center}
+.tp-link{font-size:11px;color:rgba(255,255,255,.4);cursor:pointer;text-decoration:none}
+.tp-link:hover{color:rgba(255,255,255,.7)}
 .lesson-nav{display:flex;justify-content:space-between;align-items:center;padding-top:24px;border-top:1px solid var(--border)}
 .btn-nav-lesson{display:inline-flex;align-items:center;gap:8px;padding:12px 22px;border-radius:2px;font-size:13px;font-weight:500;cursor:pointer;transition:all .2s;border:none;letter-spacing:.3px}
 .btn-prev{background:#fff;color:var(--charcoal);border:1px solid var(--border)}
@@ -163,12 +205,27 @@ html,body{height:100%;font-family:'Inter',system-ui,sans-serif;background:var(--
   <img src="logo-square.png" alt="ИИ: Код Команды" style="width:96px;height:96px;border-radius:16px;margin-bottom:16px">
   <div class="gate-logo">ИИ: <em>Код Команды</em></div>
   <div class="gate-sub">Авторский интенсив Анны Ники Гулевой</div>
-  <div class="gate-box">
-    <div class="gate-label">Введите код доступа</div>
-    <input class="gate-input" type="password" id="gateInput" placeholder="Ваш код из письма" autocomplete="off">
-    <button class="gate-btn" onclick="tryEnter()">Войти в платформу</button>
-    <div class="gate-hint">Код отправлен на вашу почту после оплаты</div>
-    <div class="gate-demo">Демо: нажмите «Войти» без пароля</div>
+  <div class="gate-box" id="gateLoginBox">
+    <div class="gate-label">Введите личный код</div>
+    <input class="gate-input" type="text" id="gateInput" placeholder="Например: HB73-XNEV" autocomplete="off">
+    <button class="gate-btn" id="gateLoginBtn" onclick="tryEnter()">Войти в платформу</button>
+    <div class="gate-error" id="gateError" style="display:none"></div>
+    <div class="gate-hint">Код был отправлен вам на почту при регистрации</div>
+    <div class="gate-switch" onclick="showGateRegister()">Ещё нет кода? Зарегистрироваться →</div>
+  </div>
+  <div class="gate-box" id="gateRegisterBox" style="display:none">
+    <div class="gate-label">Регистрация на интенсив</div>
+    <input class="gate-input" type="text" id="regFirstName" placeholder="Имя" autocomplete="off">
+    <input class="gate-input" type="text" id="regLastName" placeholder="Фамилия" autocomplete="off">
+    <input class="gate-input" type="email" id="regEmail" placeholder="Почта" autocomplete="off">
+    <input class="gate-input" type="tel" id="regPhone" placeholder="Телефон" autocomplete="off">
+    <button class="gate-btn" id="gateRegisterBtn" onclick="tryRegister()">Зарегистрироваться</button>
+    <div class="gate-error" id="regError" style="display:none"></div>
+    <div class="gate-hint">Код придёт на почту — сохраните его в заметках, он понадобится до конца обучения</div>
+    <div class="gate-switch" onclick="showGateLogin()">Уже есть код? Войти →</div>
+  </div>
+  <div class="gate-success" id="gateSuccess" style="display:none">
+    Проверьте почту — мы отправили вам личный код для входа.<br><br>Сохраните его в заметках телефона или компьютера: он понадобится до самого конца обучения.
   </div>
 </div>
 <div id="app">
@@ -179,6 +236,7 @@ html,body{height:100%;font-family:'Inter',system-ui,sans-serif;background:var(--
         <div class="topbar-progress-label">Прогресс: <span id="progressPct">0%</span></div>
         <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
       </div>
+      <a class="tp-link" onclick="openTeacherPanel()">Кабинет преподавателя</a>
       <div class="topbar-user" title="Ваш профиль">А</div>
     </div>
   </div>
@@ -348,8 +406,31 @@ html,body{height:100%;font-family:'Inter',system-ui,sans-serif;background:var(--
     </div>
   </div>
 </div>
+<div id="teacherPanel">
+  <div class="tp-header">
+    <div class="tp-header-title">Кабинет преподавателя</div>
+    <button class="tp-close" onclick="closeTeacherPanel()">Закрыть ✕</button>
+  </div>
+  <div id="tpGate" class="tp-gate">
+    <div class="gate-label" style="margin-bottom:10px">Пароль преподавателя</div>
+    <input type="password" id="tpPassInput" placeholder="Пароль">
+    <button onclick="tpLogin()">Войти</button>
+    <div class="tp-gate-error" id="tpGateError" style="display:none"></div>
+  </div>
+  <div id="tpContent" class="tp-body" style="display:none">
+    <div class="tp-section">
+      <div class="tp-section-title">Неотвеченные комментарии</div>
+      <div id="tpThreads"><div class="tp-empty">Загрузка…</div></div>
+    </div>
+    <div class="tp-section">
+      <div class="tp-section-title">Студенты</div>
+      <div id="tpStudents" class="tp-students"><div class="tp-empty">Загрузка…</div></div>
+    </div>
+  </div>
+</div>
 <script>
-const PASS='kod2024';
+const API_BASE='https://lhdwobpsuithbdxvrwkx.supabase.co/functions/v1';
+var studentCode=null, currentStudent=null;
 var curBookCfg=null,bookPageN=1;
 function bookPad(n){return(n<10?'0':'')+n;}
 function mkBook(cfg){
@@ -1127,9 +1208,55 @@ ________________________________________
 50. Сформулируй 10 идей постов, которые могут стать вирусными.
 ` }
 };
-function mkHw(hw){
+function mkHw(hw,li){
   if(!hw)return'';
-  return'<div class="homework"><div class="homework-tag">Домашнее задание</div><div class="homework-title">Практика после урока</div><div class="homework-text">'+hw+'</div><textarea class="homework-input" placeholder="Напишите ваш ответ здесь..."></textarea><button class="homework-btn">Отправить задание</button></div>';
+  return'<div class="homework"><div class="homework-tag">Домашнее задание</div><div class="homework-title">Практика после урока</div><div class="homework-text">'+hw+'</div>'
+    +'<div class="comment-thread" id="commentThread-'+li+'"></div>'
+    +'<textarea class="homework-input" id="commentInput-'+li+'" placeholder="Напишите ваш ответ здесь..."></textarea>'
+    +'<button class="homework-btn" onclick="submitComment('+li+')">Отправить задание</button>'
+    +'<div class="comment-status" id="commentStatus-'+li+'"></div></div>';
+}
+function escapeHtml(s){
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+async function loadCommentsFor(li){
+  var el=document.getElementById('commentThread-'+li);
+  if(!el||!studentCode)return;
+  try{
+    var res=await fetch(API_BASE+'/comments?lessonIndex='+li,{headers:{'x-student-code':studentCode}});
+    var data=await res.json();
+    if(data.ok)renderComments(li,data.comments);
+  }catch(e){console.error(e);}
+}
+function renderComments(li,comments){
+  var el=document.getElementById('commentThread-'+li);
+  if(!el)return;
+  var names={student:(currentStudent&&currentStudent.first_name)||'Вы',anna:'Анна Ника',yana:'Куратор Яна'};
+  el.innerHTML=comments.map(function(c){
+    var cls=c.author==='student'?'student':'staff';
+    return '<div class="comment-item '+cls+'"><div class="comment-item-author">'+(names[c.author]||c.author)+'</div>'+escapeHtml(c.body)+'</div>';
+  }).join('');
+}
+async function submitComment(li){
+  var input=document.getElementById('commentInput-'+li);
+  var body=input.value.trim();
+  if(!body)return;
+  var status=document.getElementById('commentStatus-'+li);
+  status.textContent='Отправляем…';
+  try{
+    var res=await fetch(API_BASE+'/comments',{method:'POST',headers:{'Content-Type':'application/json','x-student-code':studentCode},body:JSON.stringify({lessonIndex:li,body:body})});
+    var data=await res.json();
+    if(data.ok){
+      input.value='';
+      status.textContent='Отправлено ✓';
+      loadCommentsFor(li);
+      setTimeout(function(){status.textContent='';},2500);
+    }else{
+      status.textContent=data.error||'Ошибка отправки';
+    }
+  }catch(e){
+    status.textContent='Не удалось отправить, проверьте соединение';
+  }
 }
 var C=[
   {t:'Вводный модуль. Добро пожаловать',ls:[
@@ -1284,7 +1411,7 @@ function openLesson(mi,li){
     +'<div class="lesson-content">'+l.content+'</div>'
     +(l.book?mkBook(l.book):'')
     +mkMats(l.mats)
-    +mkHw(l.hw)
+    +mkHw(l.hw,i)
     +'<div class="lesson-nav">'
     +'<button class="btn-nav-lesson btn-prev" onclick="prevL()"'+(prevOk?'':' style="opacity:.3;cursor:default"')+'>← Предыдущий</button>'
     +(!isDone?'<button class="btn-nav-lesson btn-done" onclick="markDone('+mi+','+li+')">✓ Урок пройден</button>':'<div style="font-size:13px;color:var(--rose);font-weight:500">✓ Пройден</div>')
@@ -1292,8 +1419,14 @@ function openLesson(mi,li){
     +'</div>';
   buildSidebar();
   document.getElementById('main').scrollTo(0,0);
+  if(l.hw)loadCommentsFor(i);
 }
-function markDone(mi,li){done.add(idx(mi,li));save();updateProg();openLesson(mi,li);setTimeout(function(){var n=findByIdx(idx(mi,li)+1);if(n)openLesson(n.m,n.l);},900);}
+function markDone(mi,li){
+  var lessonIndex=idx(mi,li);
+  done.add(lessonIndex);save();updateProg();openLesson(mi,li);
+  fetch(API_BASE+'/progress',{method:'POST',headers:{'Content-Type':'application/json','x-student-code':studentCode},body:JSON.stringify({lessonIndex:lessonIndex})}).catch(function(){});
+  setTimeout(function(){var n=findByIdx(lessonIndex+1);if(n)openLesson(n.m,n.l);},900);
+}
 function prevL(){var n=findByIdx(idx(curM,curL)-1);if(n)openLesson(n.m,n.l);}
 function nextL(){var n=findByIdx(idx(curM,curL)+1);if(n)openLesson(n.m,n.l);}
 function toggleMsg(btn){
@@ -1301,19 +1434,184 @@ function toggleMsg(btn){
   var clamped=bubble.classList.toggle('clamped');
   btn.textContent=clamped?'Читать полностью ↓':'Свернуть ↑';
 }
-function tryEnter(){
-  var v=document.getElementById('gateInput').value.trim();
-  if(v===PASS){
-    document.getElementById('gate').style.display='none';
-    document.getElementById('app').classList.add('show');
-    buildSidebar();updateProg();
-  } else {
-    var inp=document.getElementById('gateInput');
-    inp.style.borderColor='#c0392b';
-    setTimeout(function(){inp.style.borderColor='';},1500);
+function showGateRegister(){
+  document.getElementById('gateLoginBox').style.display='none';
+  document.getElementById('gateRegisterBox').style.display='flex';
+}
+function showGateLogin(){
+  document.getElementById('gateRegisterBox').style.display='none';
+  document.getElementById('gateSuccess').style.display='none';
+  document.getElementById('gateLoginBox').style.display='flex';
+}
+function showGateError(elId,msg){
+  var el=document.getElementById(elId);
+  el.textContent=msg;el.style.display='block';
+}
+function hideGateErrors(){
+  document.getElementById('gateError').style.display='none';
+  document.getElementById('regError').style.display='none';
+}
+async function enterApp(code,student){
+  studentCode=code;currentStudent=student;
+  localStorage.setItem('kk_code',code);
+  document.getElementById('gate').style.display='none';
+  document.getElementById('app').classList.add('show');
+  document.querySelector('.topbar-user').textContent=(student.first_name||'?').charAt(0).toUpperCase();
+  await loadProgress();
+  buildSidebar();updateProg();
+}
+async function loadProgress(){
+  try{
+    var res=await fetch(API_BASE+'/progress',{headers:{'x-student-code':studentCode}});
+    var data=await res.json();
+    if(data.ok)done=new Set(data.done);
+  }catch(e){console.error(e);}
+}
+var tpStudentsData=[];
+function tpPass(){return sessionStorage.getItem('kk_teacher_pass');}
+function openTeacherPanel(){
+  document.getElementById('teacherPanel').classList.add('show');
+  var saved=tpPass();
+  if(saved){
+    tpVerifyAndLoad(saved);
+  }else{
+    document.getElementById('tpGate').style.display='block';
+    document.getElementById('tpContent').style.display='none';
   }
 }
+function closeTeacherPanel(){
+  document.getElementById('teacherPanel').classList.remove('show');
+}
+async function tpLogin(){
+  var pass=document.getElementById('tpPassInput').value;
+  var err=document.getElementById('tpGateError');
+  err.style.display='none';
+  var ok=await tpVerifyAndLoad(pass);
+  if(!ok){err.textContent='Неверный пароль';err.style.display='block';}
+}
+async function tpVerifyAndLoad(pass){
+  try{
+    var res=await fetch(API_BASE+'/teacher?action=students',{headers:{'x-teacher-password':pass}});
+    var data=await res.json();
+    if(!res.ok||!data.ok)return false;
+    sessionStorage.setItem('kk_teacher_pass',pass);
+    document.getElementById('tpGate').style.display='none';
+    document.getElementById('tpContent').style.display='block';
+    tpRenderStudents(data.students);
+    tpLoadThreads();
+    return true;
+  }catch(e){return false;}
+}
+function tpRenderStudents(students){
+  tpStudentsData=students;
+  var el=document.getElementById('tpStudents');
+  if(!students.length){el.innerHTML='<div class="tp-empty">Пока нет студентов</div>';return;}
+  var totalLessons=total();
+  el.innerHTML='<table><thead><tr><th>Имя</th><th>Почта</th><th>Телефон</th><th>Регистрация</th><th>Прогресс</th><th></th></tr></thead><tbody>'
+    +students.map(function(s,idx){
+      var date=new Date(s.created_at).toLocaleDateString('ru-RU');
+      return '<tr><td>'+escapeHtml(s.first_name+' '+s.last_name)+'</td><td>'+escapeHtml(s.email)+'</td><td>'+escapeHtml(s.phone||'—')+'</td><td>'+date+'</td><td>'+s.completedCount+' / '+totalLessons+'</td><td><button class="tp-del-btn" onclick="tpDeleteStudent('+idx+')">Удалить</button></td></tr>';
+    }).join('')+'</tbody></table>';
+}
+async function tpLoadThreads(){
+  var el=document.getElementById('tpThreads');
+  try{
+    var res=await fetch(API_BASE+'/teacher?action=unanswered',{headers:{'x-teacher-password':tpPass()}});
+    var data=await res.json();
+    if(!data.ok){el.innerHTML='<div class="tp-empty">Ошибка загрузки</div>';return;}
+    if(!data.threads.length){el.innerHTML='<div class="tp-empty">Нет неотвеченных сообщений 🎉</div>';return;}
+    el.innerHTML=data.threads.map(function(t,idx){
+      var date=new Date(t.created_at).toLocaleString('ru-RU');
+      var uid='tpThread'+idx;
+      return '<div class="tp-thread">'
+        +'<div class="tp-thread-head"><span class="tp-thread-name">'+escapeHtml(t.first_name+' '+t.last_name)+' · Урок '+(t.lesson_index+1)+'</span><span>'+date+'</span></div>'
+        +'<div class="tp-thread-body">'+escapeHtml(t.body)+'</div>'
+        +'<button class="tp-thread-open-btn" onclick="tpToggleReply(\''+uid+'\')">Ответить →</button>'
+        +'<div class="tp-reply-box" id="'+uid+'">'
+        +'<textarea id="'+uid+'-text" placeholder="Ваш ответ..."></textarea>'
+        +'<div class="tp-reply-actions"><select id="'+uid+'-author"><option value="anna">От имени Анны Ники</option><option value="yana">От имени Куратора Яны</option></select>'
+        +'<button onclick="tpSendReply(\''+uid+'\',\''+t.student_id+'\','+t.lesson_index+')">Отправить</button></div>'
+        +'</div></div>';
+    }).join('');
+  }catch(e){el.innerHTML='<div class="tp-empty">Ошибка загрузки</div>';}
+}
+function tpToggleReply(uid){
+  document.getElementById(uid).classList.toggle('open');
+}
+async function tpSendReply(uid,studentId,lessonIndex){
+  var text=document.getElementById(uid+'-text').value.trim();
+  var author=document.getElementById(uid+'-author').value;
+  if(!text)return;
+  try{
+    var res=await fetch(API_BASE+'/teacher?action=reply',{method:'POST',headers:{'Content-Type':'application/json','x-teacher-password':tpPass()},body:JSON.stringify({studentId:studentId,lessonIndex:lessonIndex,author:author,body:text})});
+    var data=await res.json();
+    if(data.ok)tpLoadThreads();
+  }catch(e){}
+}
+async function tpDeleteStudent(idx){
+  var s=tpStudentsData[idx];
+  if(!s||!confirm('Удалить студента '+s.first_name+' '+s.last_name+'? Это действие нельзя отменить.'))return;
+  try{
+    var res=await fetch(API_BASE+'/teacher?action=delete',{method:'POST',headers:{'Content-Type':'application/json','x-teacher-password':tpPass()},body:JSON.stringify({studentId:s.id})});
+    var data=await res.json();
+    if(data.ok){
+      var res2=await fetch(API_BASE+'/teacher?action=students',{headers:{'x-teacher-password':tpPass()}});
+      var data2=await res2.json();
+      if(data2.ok)tpRenderStudents(data2.students);
+    }
+  }catch(e){}
+}
+async function tryEnter(){
+  hideGateErrors();
+  var v=document.getElementById('gateInput').value.trim().toUpperCase();
+  if(!v){showGateError('gateError','Введите код');return;}
+  var btn=document.getElementById('gateLoginBtn');
+  btn.disabled=true;btn.textContent='Проверяем…';
+  try{
+    var res=await fetch(API_BASE+'/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({code:v})});
+    var data=await res.json();
+    if(data.ok){
+      await enterApp(v,data.student);
+    }else{
+      showGateError('gateError',data.error||'Код не найден');
+    }
+  }catch(e){
+    showGateError('gateError','Не удалось подключиться, попробуйте ещё раз');
+  }
+  btn.disabled=false;btn.textContent='Войти в платформу';
+}
+async function tryRegister(){
+  hideGateErrors();
+  var firstName=document.getElementById('regFirstName').value.trim();
+  var lastName=document.getElementById('regLastName').value.trim();
+  var email=document.getElementById('regEmail').value.trim();
+  var phone=document.getElementById('regPhone').value.trim();
+  if(!firstName||!lastName||!email){showGateError('regError','Заполните имя, фамилию и почту');return;}
+  var btn=document.getElementById('gateRegisterBtn');
+  btn.disabled=true;btn.textContent='Отправляем…';
+  try{
+    var res=await fetch(API_BASE+'/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({firstName:firstName,lastName:lastName,email:email,phone:phone})});
+    var data=await res.json();
+    if(data.ok){
+      document.getElementById('gateRegisterBox').style.display='none';
+      document.getElementById('gateSuccess').style.display='block';
+    }else{
+      showGateError('regError',data.error||'Что-то пошло не так');
+    }
+  }catch(e){
+    showGateError('regError','Не удалось подключиться, попробуйте ещё раз');
+  }
+  btn.disabled=false;btn.textContent='Зарегистрироваться';
+}
 document.getElementById('gateInput').addEventListener('keydown',function(e){if(e.key==='Enter')tryEnter();});
+(function autoLogin(){
+  var saved=localStorage.getItem('kk_code');
+  if(!saved)return;
+  fetch(API_BASE+'/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({code:saved})})
+    .then(function(r){return r.json();})
+    .then(function(data){if(data.ok)enterApp(saved,data.student);})
+    .catch(function(){});
+})();
 </script>
 </body>
 </html>
